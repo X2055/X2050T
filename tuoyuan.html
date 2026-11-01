@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>椭圆图鉴：19 个知识点，配动画与精讲例题</title>
+<style>
+:root{--bg:#faf8f3;--fg:#1c2130;--mut:#6b7387;--card:#fff;--line:#e3dfd2;--acc:#e8590c;--blu:#1c7ed6;--grn:#2f9e44;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12141a;--fg:#e8e9ee;--mut:#9aa2b5;--card:#1b1e27;--line:#323746;--acc:#ff922b;--blu:#74c0fc;--grn:#69db7c}}
+:root[data-theme="dark"]{--bg:#12141a;--fg:#e8e9ee;--mut:#9aa2b5;--card:#1b1e27;--line:#323746;--acc:#ff922b;--blu:#74c0fc;--grn:#69db7c}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.8 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+header{max-width:1040px;margin:0 auto;padding:22px 16px 6px}
+h1{margin:0;font-size:28px;letter-spacing:.02em}
+.sub{color:var(--mut);margin:2px 0}
+.wrap{max-width:1040px;margin:0 auto;padding:10px 16px 60px;display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:start}
+nav{position:sticky;top:12px}
+nav h4{margin:14px 0 4px;font-size:12px;color:var(--mut);letter-spacing:.15em}
+nav button{display:flex;gap:8px;width:100%;text-align:left;font:inherit;font-size:14px;line-height:1.4;padding:6px 10px;margin:1px 0;border:0;border-radius:8px;background:none;color:var(--fg);cursor:pointer}
+nav button b{color:var(--mut);font-weight:500;min-width:1.4em}
+nav button.on{background:var(--acc);color:#fff}nav button.on b{color:#fff}
+article h2{margin:0;font-size:24px}
+.tag{display:inline-block;color:var(--mut);font-size:13px;border:1px solid var(--line);border-radius:6px;padding:0 8px;margin:4px 0 10px}
+svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid var(--line);border-radius:14px}
+.ro{font:14px/1.7 ui-monospace,Menlo,Consolas,monospace;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:8px 0;overflow-x:auto;white-space:nowrap}
+.a{color:var(--acc)}.bl{color:var(--blu)}.g{color:var(--grn)}
+.m{font-family:Georgia,"Times New Roman",serif;font-style:italic}
+.k{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:10px;padding:10px 14px;margin:12px 0}
+.ctl{display:flex;gap:8px;margin:6px 0 14px}
+.ex{margin:18px 0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 16px}
+.ex summary{cursor:pointer;font-weight:600;color:var(--acc)}
+.ex p{margin:.5em 0}
+.ctl button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:20px;padding:3px 16px;cursor:pointer}
+.ctl .sp{flex:1}
+@media (max-width:760px){
+.wrap{display:block}
+nav{position:static;display:flex;gap:6px;overflow-x:auto;padding:4px 0 12px;margin:0 -16px;padding-left:16px;padding-right:16px;scrollbar-width:none}
+nav h4{display:none}
+nav button{width:auto;flex:none;white-space:nowrap;border:1px solid var(--line);background:var(--card);border-radius:20px;padding:4px 12px}
+}
+</style>
+</head>
+<body>
+<header><h1>椭圆图鉴</h1><p class="sub">19 个知识点，每个都有一段会动的图和一道精讲例题。点目录随时切换。橙、蓝、绿是图中的对应角色，读数里同色。</p></header>
+<div class="wrap">
+<nav id="nav" aria-label="目录"></nav>
+<article>
+<span class="tag" id="tag"></span>
+<h2 id="ti"></h2>
+<svg id="sv" viewBox="-150 -120 300 240" role="img" aria-label="动画演示"></svg>
+<div class="ro" id="ro"></div>
+<div class="ctl"><button id="pp">暂停</button><span class="sp"></span><button id="pv">上一个</button><button id="nx">下一个</button></div>
+<div id="bd"></div>
+</article>
+</div>
+<script>
+(function(){
+var U=20,a=100,b=60,N=Math.PI,Sin=Math.sin,Cos=Math.cos;
+function f(x){var s=x.toFixed(2);return s==='-0.00'?'0.00':s}
+function L(x1,y1,x2,y2,c,w,d){return '<line x1="'+x1+'" y1="'+(-y1)+'" x2="'+x2+'" y2="'+(-y2)+'" style="stroke:var(--'+c+');stroke-width:'+(w||1.5)+'"'+(d?' stroke-dasharray="'+d+'"':'')+'/>'}
+function Ci(x,y,r,c,w,fo,d){return '<circle cx="'+x+'" cy="'+(-y)+'" r="'+r+'" style="stroke:var(--'+c+');stroke-width:'+(w||1.5)+';fill:var(--'+c+');fill-opacity:'+(fo||0)+'"'+(d?' stroke-dasharray="'+d+'"':'')+'/>'}
+function El(rx,ry,c,w,fo){return '<ellipse rx="'+rx+'" ry="'+ry+'" style="stroke:var(--'+c+');stroke-width:'+w+';fill:var(--'+c+');fill-opacity:'+(fo||0)+'"/>'}
+function Dt(x,y,c,lab,dx,dy){return '<circle cx="'+x+'" cy="'+(-y)+'" r="4.5" style="fill:var(--'+c+')"/>'+(lab?'<text x="'+(x+dx)+'" y="'+(-y+dy)+'" style="fill:var(--fg);font-size:12px">'+lab+'</text>':'')}
+function Pg(p,c,fo){return '<polygon points="'+p.map(function(q){return q[0]+','+(-q[1])}).join(' ')+'" style="fill:var(--'+c+');fill-opacity:'+fo+';stroke:var(--'+c+');stroke-width:2"/>'}
+var ax='<path d="M-145 0H145M0 -115V115" fill="none" style="stroke:var(--line)"/>';
+function A_(x){return '<span class="a">'+x+'</span>'}function B_(x){return '<span class="bl">'+x+'</span>'}function G_(x){return '<span class="g">'+x+'</span>'}
+function tan2(x0,y0){var A=x0*x0-a*a,Bq=-2*x0*y0,C=y0*y0-b*b;if(Math.abs(A)<2)return null;var D=Math.sqrt(Math.max(0,Bq*Bq-4*A*C));return [1,-1].map(function(sg){var k=(-Bq+sg*D)/(2*A),m=y0-k*x0;return {k:k,tx:-a*a*k/m,ty:b*b/m}})}
+function ln(x0,y0,k,c,w){return L(x0-200,y0-200*k,x0+200,y0+200*k,c,w||1.5)}
+function kep(M){var E=M;for(var i=0;i<9;i++)E=E-(E-.6*Sin(E)-M)/(1-.6*Cos(E));return E}
+
+var T=[
+{g:0,n:'圆锥截线',tag:'源头 · 平面截圆锥',h:'用一个平面斜着去切圆锥。设切平面与圆锥轴的夹角为 α，圆锥半顶角为 β，则离心率 <span class="m">e = cosα / cosβ</span>。α &gt; β 切出<b>椭圆</b>，α = β 是抛物线，α &lt; β 是双曲线，α = 90° 就是圆（e = 0）。看动画：切平面从“躺平”慢慢立起来，e 一路增大，椭圆被拉长，直到变成抛物线、双曲线。<div class="k">Dandelin 双球：在圆锥里放两个与锥面、截面都相切的球，两个切点就是椭圆的焦点，由此推出“到两焦点距离之和为定值”。</div>',
+f:function(t){var be=30*N/180,al=(50+35*Sin(t*.5))*N/180,e=Cos(al)/Cos(be),tp=e<.985?'椭圆':e<1.015?'抛物线':'双曲线',c=e<.985?'acc':e<1.015?'grn':'blu',tb=Math.tan(be);
+return [L(0,-115,0,115,'line',1,'4 4')+L(-115*tb,-115,115*tb,115,'mut',2)+L(115*tb,-115,-115*tb,115,'mut',2)+L(-150*Sin(al),-40-150*Cos(al),150*Sin(al),-40+150*Cos(al),c,3.5)+Dt(0,0,'mut','顶点',7,-6),
+'α='+Math.round(al*180/N)+'°  β=30°  e=cosα/cosβ='+f(e)+'  → '+(c=='acc'?A_(tp):c=='grn'?G_(tp):B_(tp))]}},
+{g:0,n:'伸缩定义',tag:'第零定义 · 圆压成椭圆',h:'把圆 <span class="m">x²+y²=a²</span> 上每个点的纵坐标乘 k（k=b/a），横坐标不动，得到椭圆 <span class="m">x²/a²+y²/b²=1</span>。因此：面积乘 k，得 <span class="m">πab</span>；斜率乘 k；平行线段的长度比不变。许多椭圆题可以先还原成圆，用圆的几何性质做完，再按规则变回来。<div class="k">代入验证：x=X，y=Y/k，代入圆方程除以 a² 即得标准方程。</div>',
+f:function(t){var k=.2+.8*(.5+.5*Sin(t*.5)),th=t,qx=a*Cos(th),qy=a*Sin(th);
+return [ax+Ci(0,0,a,'acc',1.5,0,'5 4')+El(a,a*k,'blu',2.5,.1)+L(qx,qy,qx,k*qy,'mut',1.2,'3 3')+Dt(qx,qy,'acc','Q',7,-7)+Dt(qx,k*qy,'blu','P',7,-7),
+'k='+f(k)+'  b=5k='+f(5*k)+'  面积='+B_(f(N*5*5*k))+'=圆面积'+f(N*25)+'×k']}},
+{g:0,n:'距离和',tag:'第一定义 · 标准方程',h:'到两定点 F₁、F₂ 的距离之和为常数 2a（且大于焦距 2c）的点的轨迹是椭圆。动画里下方的长条由两段拼成，P 动，两段此消彼长，总长不变。关系式 <span class="m">a² = b² + c²</span>（3-4-5 就是 b-c-a）。<div class="k">焦点在 x 轴：<span class="m">x²/a²+y²/b²=1</span>；焦点在 y 轴：<span class="m">y²/a²+x²/b²=1</span>。a² 永远是较大的分母。</div>和等于焦距时是线段，小于焦距时无轨迹。',
+f:function(t){var th=t*.8,px=a*Cos(th),py=b*Sin(th),d1=Math.hypot(px+80,py),d2=Math.hypot(px-80,py);
+return [ax+El(a,b,'blu',2.5,.08)+L(-80,0,px,py,'acc',2)+L(80,0,px,py,'blu',2)+Dt(-80,0,'mut','F₁',-6,16)+Dt(80,0,'mut','F₂',-6,16)+Dt(px,py,'fg','P',7,-7)+L(-100,-100,-100+d1,-100,'acc',8)+L(-100+d1,-100,100,-100,'blu',8),
+'|PF₁|='+A_(f(d1/U))+'  |PF₂|='+B_(f(d2/U))+'  和='+f((d1+d2)/U)+'=2a']}},
+{g:0,n:'焦点准线',tag:'第二定义 · 离心率',h:'到定点 F 的距离与到定直线 l 的距离之比为常数 e（0&lt;e&lt;1）的点的轨迹是椭圆。<span class="m">e = c/a</span> 越小越圆，越大越扁；准线是 <span class="m">x = ±a²/c</span>。动画里蓝线（到焦点）与绿线（到准线）的比值始终等于 e。<div class="k">e=1 抛物线，e&gt;1 双曲线，三种曲线的统一定义。</div>',
+f:function(t){var th=t*.8,px=a*Cos(th),py=b*Sin(th),d1=Math.hypot(px-80,py),d2=125-px;
+return [ax+El(a,b,'blu',2.5,.08)+L(125,-115,125,115,'grn',2)+L(80,0,px,py,'blu',2)+L(px,py,125,py,'grn',2)+Dt(80,0,'mut','F',-4,16)+Dt(px,py,'fg','P',-14,-8),
+'到焦点='+B_(f(d1/U))+'  到准线='+G_(f(d2/U))+'  比值='+f(d1/d2)+'（e=c/a=0.80）']}},
+{g:0,n:'参数方程',tag:'离心角 · 辅助圆',h:'<span class="m">x = a cosφ，y = b sinφ</span>。几何意义：以 O 为圆心作半径 a、b 的两个同心圆，同一条射线交两圆于 Q、R，则 Q 的横坐标配 R 的纵坐标就是椭圆上的点 P。φ 叫离心角（不是 P 的极角）。<div class="k">最值神器：<span class="m">mx+ny</span> 的最大值是 <span class="m">√(m²a²+n²b²)</span>，因为它等于 <span class="m">√(…)·sin(φ+δ)</span>。</div>',
+f:function(t){var p=t*.7,qx=a*Cos(p),qy=a*Sin(p),rx=b*Cos(p),ry=b*Sin(p);
+return [ax+Ci(0,0,a,'mut',1.2,0,'5 4')+Ci(0,0,b,'mut',1.2,0,'5 4')+El(a,b,'blu',2.5,.08)+L(0,0,qx,qy,'acc',1.5)+L(qx,qy,qx,ry,'acc',1.2,'3 3')+L(rx,ry,qx,ry,'grn',1.2,'3 3')+Dt(qx,qy,'acc','Q',7,-7)+Dt(rx,ry,'grn','R',-14,-7)+Dt(qx,ry,'blu','P',7,14),
+'φ='+Math.round(((p*180/N)%360+360)%360)+'°  P=('+B_(f(5*Cos(p)))+', '+B_(f(3*Sin(p)))+')=(a cosφ, b sinφ)']}},
+{g:1,n:'焦半径·焦点弦',tag:'进阶 · 过焦点的弦',h:'焦半径：<span class="m">|PF₁| = a + e x₀，|PF₂| = a − e x₀</span>。通径（过焦点垂直于长轴的弦）长 <span class="m">2b²/a</span>。过焦点的弦被焦点分成 AF、BF 两段，动画里它们各自在变，但 <span class="m">1/|AF| + 1/|BF| = 2a/b²</span> 始终不变；弦长 <span class="m">2ab²/(a²−c²cos²φ)</span>（φ 为倾斜角）。<div class="k">本图 a=5，b=3，所以 2a/b² = 10/9 ≈ 1.11。</div>',
+f:function(t){var ph=t*.5+.3,c=Cos(ph),s=Sin(ph),A=c*c/1e4+s*s/3600,Bq=160*c/1e4,C=-.36,D=Math.sqrt(Bq*Bq-4*A*C),s1=(-Bq+D)/(2*A),s2=(-Bq-D)/(2*A),x1=80+s1*c,y1=s1*s,x2=80+s2*c,y2=s2*s;
+return [ax+El(a,b,'blu',2.5,.08)+L(x1,y1,x2,y2,'acc',2)+Dt(80,0,'mut','F',-4,16)+Dt(x1,y1,'acc','A',7,-7)+Dt(x2,y2,'blu','B',7,-7),
+'|AF|='+A_(f(s1/U))+'  |BF|='+B_(f(-s2/U))+'  1/|AF|+1/|BF|='+G_(f(U/s1+U/-s2))+'（2a/b²=1.11）']}},
+{g:1,n:'切线·光学性质',tag:'进阶 · 反射',h:'椭圆上 (x₀,y₀) 处的切线：<span class="m">x₀x/a² + y₀y/b² = 1</span>。直线 y=kx+m 与椭圆相切的条件：<span class="m">m² = a²k² + b²</span>。<b>光学性质：</b>从一个焦点发出的光，经椭圆反射后必过另一个焦点，因为切线与 PF₁、PF₂ 所成的角相等。动画里两个角读数始终相同。<div class="k">推论：焦点到任一切线的垂足，轨迹是圆 <span class="m">x²+y²=a²</span>。</div>',
+f:function(t){var th=t*.7,px=a*Cos(th),py=b*Sin(th),dx=-a*Sin(th),dy=b*Cos(th),dl=Math.hypot(dx,dy);dx/=dl;dy/=dl;
+var u1=[(-80-px),-py],u2=[(80-px),-py],l1=Math.hypot(u1[0],u1[1]),l2=Math.hypot(u2[0],u2[1]);
+var g1=Math.acos((u1[0]*dx+u1[1]*dy)/l1),g2=Math.acos((-u2[0]*dx-u2[1]*dy)/l2);
+return [ax+El(a,b,'blu',2.5,.08)+L(px-70*dx,py-70*dy,px+70*dx,py+70*dy,'grn',2)+L(-80,0,px,py,'acc',2)+L(px,py,80,0,'acc',2)+Dt(-80,0,'mut','F₁',-6,16)+Dt(80,0,'mut','F₂',-6,16)+Dt(px,py,'fg','P',7,-7),
+'入射角='+A_(Math.round(g1*180/N)+'°')+'  反射角='+A_(Math.round(g2*180/N)+'°')+'  → 光线 F₁→P→F₂']}},
+{g:1,n:'焦点三角形',tag:'进阶 · △PF₁F₂',h:'设 ∠F₁PF₂=θ。余弦定理配合 |PF₁|+|PF₂|=2a 得 <span class="m">|PF₁||PF₂| = 2b²/(1+cosθ)</span>，于是面积 <span class="m">S = b²·tan(θ/2)</span>。θ 在短轴端点最大，此时面积不是最大就是并列最大（面积 = c·|y₀|）。<div class="k">判断焦点三角形能否为直角：看 c 与 b 的大小，c ≥ b 才有 θ=90°。</div>',
+f:function(t){var th=t*.7,px=a*Cos(th),py=b*Sin(th),v1=[-80-px,-py],v2=[80-px,-py],cs=(v1[0]*v2[0]+v1[1]*v2[1])/(Math.hypot(v1[0],v1[1])*Math.hypot(v2[0],v2[1])),tp=Math.acos(Math.max(-1,Math.min(1,cs)));
+return [ax+El(a,b,'blu',2.5,.06)+Pg([[-80,0],[px,py],[80,0]],'acc',.25)+Dt(-80,0,'mut','F₁',-6,16)+Dt(80,0,'mut','F₂',-6,16)+Dt(px,py,'fg','P',7,-7),
+'θ='+Math.round(tp*180/N)+'°  S=c|y₀|='+A_(f(.2*Math.abs(py)))+'  b²tan(θ/2)='+B_(f(9*Math.tan(tp/2)))]}},
+{g:1,n:'共轭直径',tag:'进阶 · 阿波罗尼奥斯',h:'若 OP、OQ 满足 <span class="m">k<sub>OP</sub>·k<sub>OQ</sub> = −b²/a²</span>，称为一对共轭半径（参数上差 90°）。两条定理：<span class="m">|OP|²+|OQ|² = a²+b²</span>；以共轭直径端点作的外切平行四边形面积恒为 4ab。动画里两个半径在转，两个读数不动。<div class="k">它就是“伸缩变换”：圆里互相垂直的两条半径，压缩后变成共轭半径；行列式 <span class="m">x₁y₂−x₂y₁ = ab</span>。</div>',
+f:function(t){var p=t*.6,px=a*Cos(p),py=b*Sin(p),qx=-a*Sin(p),qy=b*Cos(p);
+return [ax+El(a,b,'blu',2.5,.05)+Pg([[px+qx,py+qy],[-px+qx,-py+qy],[-px-qx,-py-qy],[px-qx,py-qy]],'grn',.08)+L(0,0,px,py,'acc',2.5)+L(0,0,qx,qy,'blu',2.5)+Dt(px,py,'acc','P',7,-7)+Dt(qx,qy,'blu','Q',7,-7),
+'|OP|²+|OQ|²='+G_(f((px*px+py*py+qx*qx+qy*qy)/400))+'（a²+b²=34）  |x₁y₂−x₂y₁|='+G_(f(Math.abs(px*qy-qx*py)/400))+'（ab=15）']}},
+{g:2,n:'蒙日圆',tag:'高级 · 垂直切线的交点',h:'从点 Q 向椭圆作两条切线，设斜率 k₁、k₂。把 Q(x₀,y₀) 代入相切条件 <span class="m">m²=a²k²+b²</span>，得关于 k 的二次方程，其两根之积 <span class="m">k₁k₂ = (y₀²−b²)/(x₀²−a²)</span>。令它等于 −1，得 <span class="m">x₀²+y₀² = a²+b²</span>：互相垂直的两条切线的交点，在同一个圆上。<div class="k">这个圆叫蒙日圆（准圆），半径 √(a²+b²)。动画里 Q 沿虚线圆走，两条切线始终垂直。</div>',
+f:function(t){var R=Math.sqrt(a*a+b*b),th=t*.5,x0=R*Cos(th),y0=R*Sin(th),r=tan2(x0,y0),s=ax+Ci(0,0,R,'mut',1.3,0,'5 4')+El(a,b,'blu',2.5,.08);
+if(!r)return [s+Dt(x0,y0,'acc','Q',7,-7),'切线接近竖直，继续观察…'];
+return [s+ln(x0,y0,r[0].k,'acc')+ln(x0,y0,r[1].k,'grn')+Dt(r[0].tx,r[0].ty,'acc','',0,0)+Dt(r[1].tx,r[1].ty,'grn','',0,0)+Dt(x0,y0,'fg','Q',7,-7),
+'k₁·k₂='+B_(f(r[0].k*r[1].k))+'（两切线垂直）  |OQ|²='+f(R*R/400)+'=a²+b²']}},
+{g:2,n:'极点极线',tag:'高级 · 切点弦',h:'给定椭圆外一点 Q(x₀,y₀)，过 Q 作两条切线，两个切点的连线（切点弦）所在直线就是 Q 的<b>极线</b>：<span class="m">x₀x/a² + y₀y/b² = 1</span>。Q 在椭圆上时极线就是切线；Q 在椭圆内时极线在椭圆外。动画：Q 沿一个更大的“椭圆”游走，绿线始终是切点弦。<div class="k">这个公式把“求切点弦”降成代公式，是圆锥曲线综合题的常客。还有调和性、对合关系等更深的结论。</div>',
+f:function(t){var th=t*.5,x0=130*Cos(th),y0=78*Sin(th),r=tan2(x0,y0),s=ax+El(a,b,'blu',2.5,.08);
+if(!r)return [s+Dt(x0,y0,'acc','Q',7,-7),'切线接近竖直，继续观察…'];
+var p=r[0],q=r[1],e=.2;
+return [s+ln(x0,y0,p.k,'acc',1.2)+ln(x0,y0,q.k,'acc',1.2)+L(p.tx+(p.tx-q.tx)*e,p.ty+(p.ty-q.ty)*e,q.tx+(q.tx-p.tx)*e,q.ty+(q.ty-p.ty)*e,'grn',2.5)+Dt(p.tx,p.ty,'blu','',0,0)+Dt(q.tx,q.ty,'blu','',0,0)+Dt(x0,y0,'fg','Q',7,-7),
+'极线：'+G_(f(x0/U/25)+'·x + '+f(y0/U/9)+'·y = 1')]}},
+{g:2,n:'椭圆规',tag:'高级 · 机械作图',h:'一根长 a+b 的杆，两端分别沿 x 轴、y 轴滑动，杆上距 x 轴端点 b 处的点 P，描出的轨迹正是半轴为 a、b 的椭圆。设杆与 x 轴夹角 φ，则 P = ((a+b)cosφ − b cosφ, b sinφ) = (a cosφ, b sinφ)，恰是参数方程。<div class="k">若 P 取在杆的中点，则 a=b，轨迹是圆；若在杆的延长线上，轨迹也是椭圆。</div>',
+f:function(t){var p=t*.9,Lr=160,Ax=Lr*Cos(p),By=Lr*Sin(p),px=100*Cos(p),py=60*Sin(p);
+return [ax+El(a,b,'blu',2,.05)+L(Ax,0,0,By,'acc',3)+Dt(Ax,0,'mut','',0,0)+Dt(0,By,'mut','',0,0)+Dt(px,py,'blu','P',7,-7),
+'|AB|='+f(Math.hypot(Ax,By)/U)+'=a+b  |PA|='+f(Math.hypot(px-Ax,py)/U)+'=b  |PB|='+f(Math.hypot(px,py-By)/U)+'=a']}},
+{g:2,n:'开普勒定律',tag:'高级 · 行星轨道',h:'<b>第一定律：</b>行星轨道是椭圆，太阳在一个焦点上。<b>第二定律：</b>相同时间内，行星与太阳连线扫过的面积相等，所以近日点跑得快，远日点跑得慢。动画里橙色扇形是最近一段时间扫过的区域，它的形状在变，面积读数不变。<div class="k">用平近点角 M 和偏近点角 E，Kepler 方程 <span class="m">M = E − e sinE</span>，面积 <span class="m">S = ½ab·(M₂−M₁)</span>。第三定律 T² ∝ a³。</div>',
+f:function(t){var n=.5,D=1.2,M=n*t,E=kep(M),E1=kep(M-n*D),px=a*Cos(E),py=80*Sin(E),pts=[[60,0]],i,ar=0;
+for(i=0;i<=14;i++){var Ei=E1+(E-E1)*i/14;pts.push([a*Cos(Ei),80*Sin(Ei)])}
+for(i=0;i<pts.length;i++){var q=pts[i],q2=pts[(i+1)%pts.length];ar+=q[0]*q2[1]-q2[0]*q[1]}
+var r=Math.hypot(px-60,py);
+return [ax+El(a,80,'blu',2,.04)+Pg(pts,'acc',.3)+Dt(60,0,'acc','太阳',-12,16)+Dt(px,py,'blu','',0,0),
+'r='+f(r/U)+'  速度='+B_(f(Math.sqrt(2*a/r-1)))+'×平均  扫过面积='+A_(f(Math.abs(ar)/2/400))+'（恒定）']}},
+{g:2,n:'周长与面积',tag:'高级 · 椭圆积分',h:'面积 <span class="m">πab</span> 很干净，周长却没有初等表达式：它是第二类椭圆积分 <span class="m">4a∫₀^{π/2}√(1−e²sin²t)dt</span>。常用近似（拉马努金）：<span class="m">L ≈ π[3(a+b) − √((3a+b)(a+3b))]</span>。动画里 a 固定，e 变大，椭圆变扁，周长从圆的 2πa 缓慢缩短，面积同步减小。<div class="k">e→1 时周长趋向 4a，扁成一条线段来回走一趟。</div>',
+f:function(t){var e=.05+.9*(.5+.5*Sin(t*.4)),bb=a*Math.sqrt(1-e*e),A=5,B=bb/U,per=N*(3*(A+B)-Math.sqrt((3*A+B)*(A+3*B)));
+return [ax+Ci(0,0,a,'mut',1.3,0,'5 4')+El(a,bb,'blu',2.5,.1),
+'e='+f(e)+'  b='+f(B)+'  周长≈'+A_(f(per))+'（圆：'+f(2*N*A)+'）  面积='+B_(f(N*A*B))]}}
+];
+T.push(
+{g:3,n:'Dandelin 双球',tag:'拓展 · 距离和为何为常数',h:'在圆锥内放两个球，都与锥面相切，又分别与切平面相切于 F₁、F₂（一个在平面上方，一个在下方）。下图是过圆锥轴的侧视截面。椭圆上任一点 P 到 F₁ 的距离，等于 P 沿母线到上球切圆的长度（球外一点向球引的两条切线等长）；到 F₂ 同理。于是 |PF₁|+|PF₂| 就是两个切圆之间的母线段长，与 P 无关。<div class="k">长轴 2a = 两切圆间的母线长；2c = |F₁F₂|；e = c/a = cosα/cosβ。这是侧视截面，真实的球是立体的。</div>',
+f:function(t){var be=30*N/180,sb=Sin(be),tb=Math.tan(be),al=(52+22*Sin(t*.5))*N/180,sa=Sin(al),ca=Cos(al),y0=30,s=sb/sa,ys=[y0/(1-s),y0/(1+s)],cs=['acc','blu'],F=[],o=L(-120*tb,-120,120*tb,120,'mut',2)+L(120*tb,-120,-120*tb,120,'mut',2)+L(-130*sa,y0-130*ca,130*sa,y0+130*ca,'grn',3);
+ys.forEach(function(yc,i){var dd=-(yc-y0)*sa,fx=-dd*ca,fy=yc+dd*sa;F.push([fx,fy]);o+=Ci(0,yc,yc*sb,cs[i],1.8,.1)+Dt(fx,fy,cs[i],['F₁','F₂'][i],7,-6)});
+var sp=y0*tb/(sa-ca*tb),sm=-y0*tb/(sa+ca*tb),mj=sp-sm,fd=Math.hypot(F[0][0]-F[1][0],F[0][1]-F[1][1]);
+return [o+Dt(sp*sa,y0+sp*ca,'fg','',0,0)+Dt(sm*sa,y0+sm*ca,'fg','',0,0),'|F₁F₂|='+f(fd/U)+'  长轴='+f(mj/U)+'  e='+A_(f(fd/mj))+'  cosα/cosβ='+B_(f(ca/Cos(be)))]}},
+{g:3,n:'曲率·渐屈线',tag:'拓展 · 贴得最紧的圆',h:'曲率圆是在 P 点“贴得最紧”的圆，半径 <span class="m">ρ = (a²sin²θ + b²cos²θ)^{3/2} / (ab)</span>（θ 为离心角）。长轴端点最弯，ρ = b²/a；短轴端点最平，ρ = a²/b。曲率圆圆心的轨迹叫渐屈线（绿色，像压扁的星形），方程 <span class="m">x = (c²/a)cos³θ，y = −(c²/b)sin³θ</span>。<div class="k">法线是渐屈线的切线；反过来，把一根线绕在渐屈线上再拉直，线头就描出椭圆。</div>',
+f:function(t){var th=t*.6,px=a*Cos(th),py=b*Sin(th),s2=1e4*Sin(th)*Sin(th)+3600*Cos(th)*Cos(th),rho=Math.pow(s2,1.5)/6000,cx=64*Math.pow(Cos(th),3),cy=-6400/60*Math.pow(Sin(th),3),d='',i,q;
+for(i=0;i<=80;i++){q=i/80*2*N;d+=(i?'L':'M')+(64*Math.pow(Cos(q),3))+' '+(6400/60*Math.pow(Sin(q),3))}
+return [ax+'<path d="'+d+'" fill="none" style="stroke:var(--grn);stroke-width:2"/>'+El(a,b,'blu',2.5,.06)+Ci(cx,cy,rho,'acc',1.5,.08)+L(px,py,cx,cy,'acc',1.2,'3 3')+Dt(cx,cy,'grn','',0,0)+Dt(px,py,'fg','P',7,-7),'ρ='+A_(f(rho/U))+'  曲率κ=1/ρ='+f(U/rho)+'  （ρ 在 b²/a=1.80 与 a²/b=8.33 之间）']}},
+{g:3,n:'内接多边形',tag:'拓展 · 最大面积',h:'椭圆是圆压扁 k=b/a 倍，面积统一乘 k。圆内接正 n 边形面积最大，为 <span class="m">(n/2)sin(2π/n)·R²</span>，所以椭圆内接 n 边形的最大面积是 <span class="m">(n/2)sin(2π/n)·ab</span>：三角形 (3√3/4)ab，四边形 2ab，n 越大越接近 πab。动画里 n 每几秒加一，顶点转动，面积读数不变，因为它们都是同一个正多边形压扁而来。<div class="k">取到最大值时，各顶点的离心角均匀相差 2π/n。</div>',
+f:function(t){var n=3+Math.floor(t/4)%6,ph=t*.7,p=[],i;for(i=0;i<n;i++)p.push([a*Cos(ph+2*N*i/n),b*Sin(ph+2*N*i/n)]);
+var ar=n/2*Sin(2*N/n);return [ax+El(a,b,'blu',2.5,.06)+Pg(p,'acc',.22)+p.map(function(q){return Dt(q[0],q[1],'acc','',0,0)}).join(''),'n='+n+'  最大面积='+A_(f(ar*15))+'（=(n/2)sin(2π/n)·ab）  占椭圆 '+Math.round(ar/N*100)+'%']}},
+{g:3,n:'直线与椭圆',tag:'拓展 · 位置关系与弦长',h:'联立 y=kx+m 与椭圆消去 y，判别式正比于 <span class="m">Δ = a²k² + b² − m²</span>：Δ&gt;0 相交，Δ=0 相切，Δ&lt;0 相离。弦长 <span class="m">|AB| = √(1+k²)·|x₁−x₂|</span>，其中 <span class="m">|x₁−x₂| = 2ab√Δ / (b²+a²k²)</span>。动画里直线上下平移，颜色随位置关系变化。<div class="k">套路：设线、联立、韦达、判别式。竖直线（k 不存在）要单独讨论。</div>',
+f:function(t){var k=.5,A=6100,m=1.2*Math.sqrt(A)*Sin(t*.5),Dl=A-m*m,sq=Math.sqrt(Math.max(0,Dl)),tg=Math.abs(m)>Math.sqrt(A)*.985&&Math.abs(m)<Math.sqrt(A)*1.015,c=Dl>0?(tg?'grn':'acc'):'blu',o=ax+El(a,b,'blu',2.5,.06)+L(-140,k*-140+m,140,k*140+m,c,2.5),tx;
+if(Dl>0&&!tg){var x1=(-5000*m+6000*sq)/A,x2=(-5000*m-6000*sq)/A;o+=Dt(x1,k*x1+m,'acc','',0,0)+Dt(x2,k*x2+m,'acc','',0,0);tx='相交  弦长='+A_(f(Math.sqrt(1+k*k)*Math.abs(x1-x2)/U))}else tx=tg?G_('相切'):B_('相离');
+return [o,'Δ='+f(Dl/400)+'  '+tx]}}
+);
+T.push({g:3,n:'Dandelin 三维',tag:'拓展 · 真正的立体图',h:`把上一页的侧视图立起来：圆锥内有两个球（橙、蓝），与锥面相切于两个圆，又与绿色的切平面分别相切于 F₁、F₂。绿色闭曲线是平面与圆锥的截线，也就是椭圆。动画里整个场景在缓慢旋转，切平面的倾角也在变。P 沿截线运动，绿色那条母线从顶点出发，依次穿过 P 和两个切圆。关键一步：从 P 向同一个球引的两条切线等长，所以 |PF₁| 等于 P 到橙色切圆的母线长，|PF₂| 等于 P 到蓝色切圆的母线长。两段相加恰好是两个切圆之间的母线长，与 P 的位置无关，这就是“距离和为定值”。</p><p><b>要点：</b>长轴 2a = 两切圆之间的母线长；焦距 2c = |F₁F₂|；e = cosα / cosβ。画面为正交投影，未做隐藏线处理，球和锥面是半透明叠加。`,
+f:function(t){var be=30*N/180,sb=Sin(be),cb=Cos(be),tb=Math.tan(be),al=(67+9*Sin(t*.5))*N/180,sa=Sin(al),ca=Cos(al),z0=26,s=sb/sa,zc=[z0/(1-s),z0/(1+s)],cs=['acc','blu'],ps=t*.35,cp=Cos(ps),sp=Sin(ps),ce=Cos(.35),se=Sin(.35),K=1.4,o='',i,F=[],sc=[],sec=[];
+function pr(p){var xr=p[0]*cp-p[1]*sp,yr=p[0]*sp+p[1]*cp;return [K*xr,K*(p[2]*ce+yr*se-50)]}
+function Pl(p,c,w,op){return `<polyline points='${p.map(function(q){q=pr(q);return q[0].toFixed(1)+','+(-q[1]).toFixed(1)}).join(' ')}' style='fill:none;stroke:var(--${c});stroke-width:${w};opacity:${op||1}'/>`}
+function Gd(ph){return [sb*Cos(ph),sb*Sin(ph),cb]}
+function Sc(ph){var g=Gd(ph),k=-z0*sa/(g[0]*ca-g[2]*sa);return [g[0]*k,g[1]*k,g[2]*k]}
+function circ(z,r){var r2=[],j;for(j=0;j<=48;j++)r2.push([r*Cos(j/48*2*N),r*Sin(j/48*2*N),z]);return r2}
+function D3(u,v){return Math.hypot(u[0]-v[0],u[1]-v[1],u[2]-v[2])}
+function d3(p,c,l){var q=pr(p);return Dt(q[0],q[1],c,l||'',6,-6)}
+for(i=0;i<12;i++){var q=2*N*i/12;o+=Pl([[0,0,0],[105*tb*Cos(q),105*tb*Sin(q),105]],'mut',.8,.6)}
+o+=Pl(circ(105,105*tb),'mut',1.2,.8);
+o+=Pg([[-75,-60],[75,-60],[75,60],[-75,60]].map(function(c){return pr([c[0]*sa,c[1],z0+c[0]*ca])}),'grn',.1);
+zc.forEach(function(zz,j){var cq=pr([0,0,zz]),dd=-(zz-z0)*sa,scj=zz*cb;sc.push(scj);F.push([-dd*ca,0,zz+dd*sa]);o+=Ci(cq[0],cq[1],K*zz*sb,cs[j],1.5,.13)+Pl(circ(scj*cb,scj*sb),cs[j],2)});
+for(i=0;i<=60;i++)sec.push(Sc(2*N*i/60));
+o+=Pl(sec,'grn',2.5);
+var P=Sc(t*.9),g=Gd(t*.9),Q1=[g[0]*sc[0],g[1]*sc[0],g[2]*sc[0]],Q2=[g[0]*sc[1],g[1]*sc[1],g[2]*sc[1]],d1=D3(P,F[0]),d2=D3(P,F[1]);
+o+=Pl([[0,0,0],Q1],'grn',1.4,.8)+Pl([P,F[0]],'acc',2.2)+Pl([P,F[1]],'blu',2.2)+d3(F[0],'acc','F₁')+d3(F[1],'blu','F₂')+d3(Q1,'acc')+d3(Q2,'blu')+d3(P,'fg','P');
+return [o,'|PF₁|='+A_(f(d1/U))+'  |PF₂|='+B_(f(d2/U))+'  和='+G_(f((d1+d2)/U))+'  两切圆间母线='+f((sc[0]-sc[1])/U)]}});
+function X(q,i,s,c){return '<details class="ex"><summary>配套例题 · 精讲</summary><p><b>题：</b>'+q+'</p><p><b>思路：</b>'+i+'</p><p><b>解：</b>'+s+'</p><p><b>点评：</b>'+c+'</p></details>'}
+var EX=[
+X('圆锥半顶角 β=60°，平面与轴夹角 α=75°，求截线的离心率，并说出 α 的范围使截线为椭圆。','公式 e=cosα/cosβ，椭圆要求 e&lt;1。','e = cos75°/cos60° = ((√6−√2)/4)/(1/2) = (√6−√2)/2 ≈ 0.52。由 e&lt;1 得 cosα&lt;cosβ，即 α&gt;β，所以 60°&lt;α≤90°（90° 为圆）。','α 是平面与<b>轴</b>的夹角，别和“与母线夹角”混淆。'),
+X('椭圆 x²/9+y²/4=1 上两点 A、B 满足 k<sub>OA</sub>·k<sub>OB</sub> = −4/9，求 △OAB 面积。','a=3，b=2，k=b/a=2/3。把椭圆还原成圆 x²+y²=9，斜率除以 k。','还原后斜率之积 = (−4/9)/(4/9) = −1，所以圆里 OA⊥OB，面积 = ½×3×3 = 9/2。压缩回椭圆，面积乘 k：9/2 × 2/3 = <b>3</b>（定值，恰为 ab/2）。','“斜率之积 = −b²/a²”是椭圆里的“直角”，对应圆里的垂直。'),
+X('A(−3,0)、B(3,0)，动点 P 满足 |PA|+|PB| = 10，求轨迹方程；若和为 6、为 4 呢？','先比较“和”与焦距 |AB|=6，再决定轨迹类型。','和 10&gt;6：2a=10，a=5，c=3，b²=a²−c²=16，方程 x²/25+y²/16=1。和 =6：等于焦距，轨迹是线段 AB（y=0，−3≤x≤3）。和 =4&lt;6：无轨迹。','先判断类型再写方程，是定义法最容易丢分的地方。'),
+X('椭圆 x²/25+y²/9=1，点 P 到右焦点的距离为 3，求 P 到右准线的距离及 P 的横坐标。','a=5，b=3，c=4，e=4/5，右准线 x=a²/c=25/4。','到准线距离 d = |PF₂|/e = 3/(4/5) = 15/4。P 在准线左侧，x = 25/4 − 15/4 = 5/2。验证：|PF₂| = a−ex = 5−(4/5)(5/2) = 3 ✓。','“焦半径 = e × 到准线距离”，能把两类距离互相换算。'),
+X('P(x,y) 在椭圆 x²/4+y²=1 上，求 x+2y 的最大值。','设 x=2cosφ，y=sinφ，把二元问题变成一元三角函数。','x+2y = 2cosφ+2sinφ = 2√2·sin(φ+π/4)，最大值 <b>2√2</b>，在 φ=π/4 时取到。','直接套公式：mx+ny 的最大值为 √(m²a²+n²b²)=√(4+4)=2√2。'),
+X('椭圆 x²/25+y²/9=1 的右焦点 F，过 F 作倾斜角 60° 的弦 AB，求 |AB|。','焦点弦长公式 2ab²/(a²−c²cos²φ)。','a=5，b²=9，c=4，cos²60°=1/4：|AB| = 2·5·9/(25−16/4) = 90/21 = <b>30/7</b>。核对：设 |AF|=m，|BF|=n，则 1/m+1/n = 2a/b² = 10/9，且 m+n=30/7，两者自洽。','焦点弦问题优先想公式，不要联立（联立要算很久）。'),
+X('求椭圆 x²/4+y²/3=1 在点 P(1, 3/2) 处的切线方程，并求两个焦点到切线的距离之积。','先验证点在椭圆上，再用切线公式 x₀x/a²+y₀y/b²=1。','1/4+(9/4)/3=1 ✓。切线：x/4 + (3/2)y/3 = 1，即 x+2y−4=0。焦点 F₁(−1,0)、F₂(1,0)：d₁=|−1−4|/√5=5/√5，d₂=|1−4|/√5=3/√5，d₁d₂ = 15/5 = 3 = b²。','焦点到切线的距离之积恒等于 b²，这是光学性质的代数面孔。'),
+X('椭圆 x²/9+y²/4=1 的焦点为 F₁、F₂，P 在椭圆上，∠F₁PF₂=60°，求 △F₁PF₂ 的面积。','设 |PF₁|=m，|PF₂|=n，用定义 m+n=2a 配余弦定理。','a=3，b²=4，c²=5。m+n=6，余弦定理：20 = m²+n²−mn = (m+n)²−3mn = 36−3mn，所以 mn=16/3。S = ½mn·sin60° = ½·(16/3)·(√3/2) = <b>4√3/3</b>。公式核对：b²tan30° = 4·√3/3 ✓。','记住 S=b²tan(θ/2)，选择题几秒出结果。先检查 θ 可达：c=√5≥b=2，最大角超过 90°，60° 可取。'),
+X('椭圆 x²/16+y²/9=1 中，OP、OQ 为共轭半径，|OP|=√13，求 |OQ| 和 △OPQ 的面积。','用两条定理：|OP|²+|OQ|²=a²+b²，|x₁y₂−x₂y₁|=ab。','|OQ|² = 16+9−13 = 12，|OQ| = 2√3。面积 S = ½|x₁y₂−x₂y₁| = ½ab = ½·4·3 = <b>6</b>。','把共轭半径看成圆里相互垂直的两条半径，压缩后得到，所以面积恒为 ab/2。'),
+X('点 Q 在直线 y=2 上，过 Q 作椭圆 x²/4+y²=1 的两条切线互相垂直，求 Q 的坐标。','互相垂直的切线交点在蒙日圆 x²+y²=a²+b² 上。','a²+b²=5，Q(x,2) 满足 x²+4=5，x=±1，所以 Q(±1, 2)。检验：Q 在椭圆外 ✓，且 x≠±a，两切线都有斜率。','不用设斜率解方程，直接用蒙日圆，一步到位。'),
+X('过点 Q(4,0) 作椭圆 x²/4+y²=1 的两条切线，求切点弦所在直线及弦长。','切点弦就是 Q 的极线：x₀x/a²+y₀y/b²=1。','极线：4x/4 + 0 = 1，即 x=1。代入椭圆：1/4+y²=1，y=±√3/2。弦长 = <b>√3</b>。','不必先求切线和切点，极线公式让“切点弦”一步到手。'),
+X('一根长 10 的杆，两端 A、B 分别在 x 轴、y 轴上滑动，P 在杆上且 |PA|=4，求 P 的轨迹方程。','设杆与 x 轴夹角 φ，用 φ 表示 A、B，再按比例求 P。','A(10cosφ,0)，B(0,10sinφ)，P = A + (4/10)(B−A) = (6cosφ, 4sinφ)，所以 x²/36+y²/16=1。','杆被 P 分成 4 和 6：靠近 x 轴端的那段 4 是 b，另一段 6 是 a。'),
+X('某行星轨道半长轴 a=4 AU，e=0.5，求近日点、远日点距离，近远日点速度之比，周期。','近日点 r=a(1−e)，远日点 r=a(1+e)；角动量守恒 rv 为常数；第三定律 T²=a³（年，AU）。','近日点 4×0.5=2 AU，远日点 4×1.5=6 AU。速度比 v近/v远 = r远/r近 = 6/2 = <b>3</b>。T = √(4³) = 8 年。','“扫过面积相等”等价于 r·v 守恒，这是角动量守恒在椭圆里的样子。'),
+X('估算 a=5，b=3 的椭圆周长和面积。','周长用拉马努金近似，面积 πab。','L ≈ π[3(5+3) − √((15+3)(5+9))] = π[24−√252] ≈ π×8.1255 ≈ <b>25.53</b>。面积 = 15π ≈ 47.12。','不要用 2π√(ab) 之类的粗糙猜法，误差可达百分之几。'),
+X('圆锥半顶角 β=30°，平面与轴夹角 α=60°，截得椭圆的焦距 2c=4，求长轴长。','先求 e，再由 a=c/e。','e = cos60°/cos30° = (1/2)/(√3/2) = √3/3。c=2，a = c/e = 2√3，长轴 2a = <b>4√3</b>。','两球之间的母线长就是 2a，这是 Dandelin 双球给出的几何意义。'),
+X('求椭圆 x²/25+y²/9=1 在长轴端点 (5,0) 与短轴端点 (0,3) 处的曲率半径。','用 ρ = (a²sin²θ+b²cos²θ)^{3/2}/(ab)。','(5,0) 对应 θ=0：ρ = (b²)^{3/2}/(ab) = b²/a = 9/5。(0,3) 对应 θ=90°：ρ = a²/b = 25/3。','长轴端点曲率半径小（弯得急），短轴端点大（平缓）。'),
+X('求椭圆 x²/9+y²/4=1 内接三角形面积的最大值。','压缩回圆，用“圆内接正三角形面积最大”。','圆 x²+y²=9 内接正三角形面积 = (3√3/4)·3² = 27√3/4，再乘 k=2/3：<b>9√3/2</b>。公式核对：(3√3/4)ab = (3√3/4)·6 ✓。','内接四边形同理，最大面积 2ab=12。'),
+X('直线 y=x+m 与椭圆 x²/4+y²=1 有两个交点，求 m 的范围；m=1 时求弦长。','计算 Δ=a²k²+b²−m²，要求 Δ&gt;0。','a²=4，b²=1，k=1：Δ=5−m²&gt;0，所以 −√5&lt;m&lt;√5。m=1：x²/4+(x+1)²=1，即 5x²+8x=0，x=0 或 −8/5，弦长 = √2·8/5 = <b>8√2/5</b>。','弦长公式 √(1+k²)|x₁−x₂| 是联立类题的主力。')
+];
+EX.push(X('圆锥内两个 Dandelin 球与同一条母线的切点相距 8，且切平面截得椭圆的离心率 e=1/2，求椭圆的长半轴、短半轴。','两切点间的母线长就是 2a；再用 e=c/a 和 b²=a²−c² 往下推。','2a=8，所以 a=4。c=ea=2，b²=a²−c²=16−4=12，b=2√3。','这就是“距离和为常数”的几何来源：球外一点向球引的切线等长，所以任意点到两焦点的距离和等于两切圆间的母线段长。'));
+var groups=['基础篇','进阶篇','高级篇','拓展篇'],nav=document.getElementById('nav'),sv=document.getElementById('sv'),ro=document.getElementById('ro'),pp=document.getElementById('pp'),cur=0,t=1,run=true,last=0;
+var btns=[],lg=-1;
+T.forEach(function(x,i){if(x.g!==lg){lg=x.g;var h=document.createElement('h4');h.textContent=groups[lg];nav.appendChild(h)}
+ var bt=document.createElement('button');bt.innerHTML='<b>'+(i+1)+'</b><span>'+x.n+'</span>';bt.onclick=function(){go(i)};nav.appendChild(bt);btns.push(bt)});
+function draw(){var o=T[cur].f(t);sv.innerHTML=o[0];ro.innerHTML=o[1]}
+function go(i,noh){i=(i+T.length)%T.length;cur=i;var x=T[i];
+ document.getElementById('ti').textContent=(i+1)+'. '+x.n;document.getElementById('tag').textContent=x.tag;document.getElementById('bd').innerHTML='<p>'+x.h+'</p>'+EX[i];
+ btns.forEach(function(b2,j){b2.className=j===i?'on':''});
+ try{btns[i].scrollIntoView({block:'nearest',inline:'center'})}catch(e){}
+ if(!noh){try{history.replaceState(null,'','#t'+(i+1))}catch(e){}}
+ draw()}
+document.getElementById('pv').onclick=function(){go(cur-1)};document.getElementById('nx').onclick=function(){go(cur+1)};
+pp.onclick=function(){run=!run;pp.textContent=run?'暂停':'播放'};
+if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches){run=false;pp.textContent='播放'}
+function loop(ts){var dt=last?(ts-last)/1000:0;last=ts;if(run){t+=Math.min(dt,.05);draw()}requestAnimationFrame(loop)}
+function fromHash(){var m=/^#t(\d+)$/.exec(location.hash);return m&&+m[1]>=1&&+m[1]<=T.length?+m[1]-1:0}
+window.addEventListener('hashchange',function(){go(fromHash(),true)});
+go(fromHash(),true);requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
