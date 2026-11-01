@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>椭圆图鉴：19 个知识点，配动画与精讲例题</title>
+<title>椭圆：19 个知识点，配动画与精讲例题</title>
 <style>
 :root{--bg:#faf8f3;--fg:#1c2130;--mut:#6b7387;--card:#fff;--line:#e3dfd2;--acc:#e8590c;--blu:#1c7ed6;--grn:#2f9e44;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12141a;--fg:#e8e9ee;--mut:#9aa2b5;--card:#1b1e27;--line:#323746;--acc:#ff922b;--blu:#74c0fc;--grn:#69db7c}}
@@ -31,6 +31,11 @@ svg{width:100%;height:auto;display:block;background:var(--card);border:1px solid
 .ex{margin:18px 0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 16px}
 .ex summary{cursor:pointer;font-weight:600;color:var(--acc)}
 .ex p{margin:.5em 0}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.92em;line-height:1.3;margin:0 .12em}
+.fr>.n{border-bottom:1px solid currentColor;padding:0 .25em}
+.fr>.d{padding:0 .25em}
+.rt{border-top:1.5px solid currentColor;padding:0 .14em;margin-left:.05em}
+sup{font-size:.75em;line-height:0}
 .ctl button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:20px;padding:3px 16px;cursor:pointer}
 .ctl .sp{flex:1}
 @media (max-width:760px){
@@ -197,9 +202,15 @@ var groups=['基础篇','进阶篇','高级篇','拓展篇'],nav=document.getEle
 var btns=[],lg=-1;
 T.forEach(function(x,i){if(x.g!==lg){lg=x.g;var h=document.createElement('h4');h.textContent=groups[lg];nav.appendChild(h)}
  var bt=document.createElement('button');bt.innerHTML='<b>'+(i+1)+'</b><span>'+x.n+'</span>';bt.onclick=function(){go(i)};nav.appendChild(bt);btns.push(bt)});
-function draw(){var o=T[cur].f(t);sv.innerHTML=o[0];ro.innerHTML=o[1]}
+var RUN=/[0-9A-Za-zα-ωΑ-Ω√²³₀-₉°.]+(?:<sub>[^<]*<\/sub>)?/.source,AT='(?:'+/\([^()]*\)/.source+'|'+/\|[^|<>]+\|/.source+'|'+RUN+')'+/(?:\u0001\d+\u0001)?/.source,RE=new RegExp('('+AT+')'+/\s*\/\s*/.source+'('+AT+')','g');
+function sq(s){var o='',i=0,j,d,m,inn;while(i<s.length){if(s.charAt(i)=='√'){i++;if(s.charAt(i)=='('){d=0;for(j=i;j<s.length;j++){if(s.charAt(j)=='(')d++;else if(s.charAt(j)==')'&&--d==0)break}inn=sq(s.slice(i+1,j));i=j+1}else{m=/^[0-9A-Za-zα-ωΑ-Ω²³₀-₉.]+/.exec(s.slice(i));inn=m?m[0]:'';i+=inn.length}o+='√<span class="rt">'+inn+'</span>'}else o+=s.charAt(i++)}return o}
+function mk(s){var ph=[],pv,i;s=s.replace(/\^\{([^}]*)\}/g,'<sup>$1</sup>').replace(/<sup>[^<]*<\/sup>/g,function(m){ph.push(m);return '\u0001'+(ph.length-1)+'\u0001'});
+function st(x){return x.charAt(0)=='('&&x.slice(-1)==')'&&x.indexOf('\u0001')<0?x.slice(1,-1):x}
+for(i=0;i<5;i++){pv=s;s=s.replace(RE,function(m,l,r){return '<span class="fr"><span class="n">'+st(l)+'</span><span class="d">'+st(r)+'</span></span>'});if(s===pv)break}
+s=s.replace(/\u0001(\d+)\u0001/g,function(m,j){return ph[j]});return sq(s)}
+function draw(){var o=T[cur].f(t);sv.innerHTML=o[0];ro.innerHTML=mk(o[1])}
 function go(i,noh){i=(i+T.length)%T.length;cur=i;var x=T[i];
- document.getElementById('ti').textContent=(i+1)+'. '+x.n;document.getElementById('tag').textContent=x.tag;document.getElementById('bd').innerHTML='<p>'+x.h+'</p>'+EX[i];
+ document.getElementById('ti').textContent=(i+1)+'. '+x.n;document.getElementById('tag').textContent=x.tag;document.getElementById('bd').innerHTML=mk('<p>'+x.h+'</p>'+EX[i]);
  btns.forEach(function(b2,j){b2.className=j===i?'on':''});
  try{btns[i].scrollIntoView({block:'nearest',inline:'center'})}catch(e){}
  if(!noh){try{history.replaceState(null,'','#t'+(i+1))}catch(e){}}
