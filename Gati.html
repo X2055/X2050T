@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gati 教学说明书 · 双版本</title>
+<style>
+:root {
+  --primary: #4a90d9;
+  --primary-light: #e8f0fe;
+  --primary-dark: #2c5f8a;
+  --bg: #f5f7fa;
+  --card-bg: #ffffff;
+  --text: #2c3e50;
+  --text-light: #6b7c8d;
+  --border: #dde3ea;
+  --green: #22c55e;
+  --green-bg: #ecfdf5;
+  --yellow: #f59e0b;
+  --yellow-bg: #fffbeb;
+  --red: #ef4444;
+  --red-bg: #fef2f2;
+  --code-bg: #f1f5f9;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --radius: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, "Microsoft YaHei", "PingFang SC", sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; }
+
+/* Header */
+header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); padding: 20px 30px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow); }
+.header-left { display: flex; align-items: center; gap: 14px; }
+.header-left svg { width: 42px; height: 42px; fill: white; }
+.header-text h1 { color: white; font-size: 20px; font-weight: 600; }
+.header-text p { color: rgba(255,255,255,0.85); font-size: 13px; }
+.download-btn { background: white; color: var(--primary); border: none; padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+.download-btn:hover { background: var(--primary-light); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+
+/* Modal */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; }
+.modal-overlay.active { display: flex; }
+.modal { background: var(--card-bg); border-radius: 16px; padding: 32px; max-width: 420px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+.modal h3 { font-size: 18px; margin-bottom: 8px; color: var(--text); }
+.modal p { font-size: 14px; color: var(--text-light); margin-bottom: 24px; }
+.modal-btns { display: flex; gap: 12px; }
+.modal-btns a { flex: 1; text-align: center; padding: 14px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+.btn-worm { background: var(--green-bg); color: var(--green); border: 2px solid var(--green); }
+.btn-worm:hover { background: var(--green); color: white; }
+.btn-rat { background: var(--red-bg); color: var(--red); border: 2px solid var(--red); }
+.btn-rat:hover { background: var(--red); color: white; }
+.modal-close { margin-top: 16px; text-align: center; }
+.modal-close button { background: none; border: none; color: var(--text-light); cursor: pointer; font-size: 14px; }
+.modal-close button:hover { color: var(--text); }
+
+/* Tabs */
+.tabs { display: flex; gap: 0; max-width: 1200px; margin: 24px auto 0; padding: 0 20px; }
+.tab-btn { flex: 1; padding: 14px 24px; border: none; background: var(--card-bg); font-size: 15px; font-weight: 600; color: var(--text-light); cursor: pointer; border-bottom: 3px solid var(--border); transition: all 0.2s; }
+.tab-btn:first-child { border-radius: 12px 0 0 0; }
+.tab-btn:last-child { border-radius: 0 12px 0 0; }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: white; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Layout */
+.container { max-width: 1200px; margin: 0 auto; padding: 24px 20px; display: flex; gap: 24px; }
+
+/* Sidebar */
+.sidebar { width: 260px; flex-shrink: 0; position: sticky; top: 90px; height: calc(100vh - 110px); overflow-y: auto; }
+.sidebar-card { background: var(--card-bg); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.sidebar-card h3 { font-size: 14px; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+.sidebar-card a { display: block; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: var(--text); font-size: 14px; transition: all 0.15s; margin-bottom: 2px; }
+.sidebar-card a:hover { background: var(--primary-light); color: var(--primary); }
+.sidebar-card a.active { background: var(--primary); color: white; }
+
+/* Main */
+.main-content { flex: 1; min-width: 0; }
+
+/* Module Card */
+.module { background: var(--card-bg); border-radius: var(--radius); margin-bottom: 16px; box-shadow: var(--shadow); overflow: hidden; }
+.module-header { padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: background 0.15s; }
+.module-header:hover { background: #fafbfc; }
+.module-header-left { display: flex; align-items: center; gap: 12px; }
+.module-header h2 { font-size: 16px; color: var(--text); }
+.badge { padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+.badge.safe { background: var(--green-bg); color: var(--green); }
+.badge.caution { background: var(--yellow-bg); color: var(--yellow); }
+.badge.danger { background: var(--red-bg); color: var(--red); }
+.arrow { width: 20px; height: 20px; transition: transform 0.25s; color: var(--text-light); }
+.arrow.open { transform: rotate(180deg); }
+.module-body { display: none; padding: 0 24px 24px; }
+.module-body.open { display: block; }
+
+/* Original Text Block */
+.original { background: #f8f9fb; border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 16px 0; }
+.original-label { display: inline-block; background: var(--text); color: white; padding: 2px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; margin-bottom: 12px; }
+.original p, .original li { font-size: 14px; color: #374151; margin-bottom: 8px; }
+.original pre { background: #1e293b; color: #e2e8f0; padding: 14px; border-radius: 8px; overflow-x: auto; font-size: 13px; margin: 10px 0; }
+.original code { background: #e5e7eb; padding: 1px 5px; border-radius: 3px; font-family: Consolas, monospace; font-size: 13px; }
+.original table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+.original th { background: #eef1f5; padding: 8px 10px; text-align: left; border: 1px solid var(--border); }
+.original td { padding: 8px 10px; border: 1px solid var(--border); }
+
+/* Teaching Block */
+.teaching { background: var(--primary-light); border: 1px solid #c7d9f5; border-radius: 10px; padding: 20px; margin: 16px 0; }
+.teaching-label { display: inline-block; background: var(--primary); color: white; padding: 2px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; margin-bottom: 12px; }
+.teaching p, .teaching li { font-size: 14px; margin-bottom: 8px; }
+.teaching p strong { color: var(--primary-dark); }
+
+/* Shared elements */
+.section-title { font-size: 15px; font-weight: 600; color: var(--primary-dark); margin: 18px 0 10px; padding-left: 10px; border-left: 3px solid var(--primary); }
+.warn-box { background: var(--red-bg); border: 1px solid #fecaca; border-radius: 10px; padding: 14px 18px; margin: 16px 0; color: #991b1b; font-size: 14px; }
+.tip-box { background: var(--primary-light); border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px 18px; margin: 16px 0; color: var(--primary-dark); font-size: 14px; }
+.think-box { background: var(--yellow-bg); border: 1px solid #fde68a; border-radius: 10px; padding: 16px; margin: 16px 0; }
+.think-box h4 { color: #92400e; font-size: 14px; margin-bottom: 8px; }
+.think-box p { font-size: 14px; color: #78350f; margin-bottom: 6px; }
+pre { background: #1e293b; color: #e2e8f0; padding: 14px; border-radius: 8px; overflow-x: auto; font-size: 13px; margin: 10px 0; }
+code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; font-family: Consolas, monospace; font-size: 13px; color: var(--primary-dark); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container { flex-direction: column; }
+  .sidebar { width: 100%; position: static; height: auto; }
+  header { padding: 14px 16px; flex-direction: column; gap: 10px; }
+  .header-text h1 { font-size: 17px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="white" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>
+    <div class="header-text">
+      <h1>Gati 教学说明书 · 双版本模块化讲解</h1>
+      <p>网络安全课程 · 仅限隔离虚拟机学习 · 完整原文 + 插入式教学解读</p>
+    </div>
+  </div>
+  <button class="download-btn" onclick="openModal()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+    教具下载
+  </button>
+</header>
+
+<!-- Download Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h3>📦 选择教学教具</h3>
+    <p>两份 Gati 样本源码包，用于隔离虚拟机内的代码阅读与静态分析。请勿在真实环境运行。</p>
+    <div class="modal-btns">
+      <a href="./Gati蠕虫.zip" class="btn-worm" download>🪱 Gati蠕虫版<br><span style="font-size:12px;font-weight:400;">恶搞锁屏 · 离线 · 无C2(破坏性默认关闭)</span></a>
+      <a href="./Gati远控.zip" class="btn-rat" download>🖥️ Gati远控版<br><span style="font-size:12px;font-weight:400;">RAT框架 · 反向C2 · 勒索(破坏性需配置后开启）</span></a>
+    </div>
+    <div class="modal-close"><button onclick="closeModal()">取消关闭</button></div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('version-a')">🪱 版本A · 恶搞蠕虫说明书</button>
+  <button class="tab-btn" onclick="switchTab('version-b')">🖥️ 版本B · 远控框架手册</button>
+</div>
+
+<div class="container">
+
+  <!-- Sidebar nav will be populated by JS per tab -->
+  <nav class="sidebar" id="sidebar"></nav>
+
+  <main class="main-content" id="main-content">
+    <!-- Content injected by JS -->
+  </main>
+</div>
+
+<script>
+// ============ DATA ============
+
+const versionA = {
+  title: "版本A · 恶搞蠕虫 Gati",
+  nav: [
+    {id:"a1", label:"第1章 程序整体定位"},
+    {id:"a2", label:"第2章 交付文件清单"},
+    {id:"a3", label:"第3章 快速上手流程"},
+    {id:"a4", label:"第4章 屏幕显示参数"},
+    {id:"a5", label:"第5章 文案实时修改"},
+    {id:"a6", label:"第6章 「关不掉」七层原理"},
+    {id:"a7", label:"第7章 传播模块"},
+    {id:"a8", label:"第8章 破坏模块"},
+    {id:"a9", label:"第9章 解除与清理"},
+    {id:"a10", label:"第10章 常见问题FAQ"},
+    {id:"a11", label:"第11章 源码结构+改造"},
+    {id:"a12", label:"第12章 编译方法"},
+    {id:"a13", label:"第13章 已知限制"},
+    {id:"a14", label:"第14章 作者忠告"},
+  ],
+  modules: [
+    {
+      id:"a1", title:"第1章 这东西到底是什么", badge:"safe", badgeText:"基础概念",
+      original: `<p>Gati 是一款 Windows 平台<strong>本地离线恶搞程序</strong>，没有网络功能、不存在C2远程控制、不会窃取任何数据。</p>
+<p>三个模块权限完全分离：</p>
+<table><tr><th>模块</th><th>默认状态</th><th>功能说明</th></tr>
+<tr><td>显示模块</td><td>开启</td><td>全屏置顶文字、屏蔽大部分系统快捷键，视觉上"关不掉"</td></tr>
+<tr><td>传播模块</td><td>关闭</td><td>自我复制至U盘、网络共享目录（无漏洞利用，依赖人工双击）</td></tr>
+<tr><td>破坏模块</td><td>关闭</td><td>覆写文件、清除系统还原、覆盖MBR，不可逆破坏</td></tr>
+</table>
+<p>核心特点：<code>0行网络代码</code>，源码1873行Go代码完全可读；传播、破坏默认写死关闭，避免误操作。</p>`,
+      teaching: `<p><strong>教学解读：</strong>这是理解 Gati 的第一道分水岭。它和你在网上看到的"蠕虫病毒"完全不同——真正的蠕虫会利用漏洞自动传播、有网络通信、有远程控制。而这份 Gati：</p>
+<ul>
+<li>不连网 → 没有 C2 服务器可以接收指令</li>
+<li>不窃密 → 不读密码、不截屏、不上传文件</li>
+<li>传播靠复制文件 → 对方必须手动双击才会运行</li>
+</ul>
+<p>所以它本质上是一个<strong>带有自启动和键盘拦截的"全屏锁屏器"</strong>，恶搞属性远大于破坏属性。但一旦打开破坏模块，危险等级立刻飙升。</p>`
+    },
+    {
+      id:"a2", title:"第2章 交付文件清单", badge:"safe", badgeText:"文件结构",
+      original: `<p>压缩包原始文件：</p>
+<ul>
+<li><code>Gati.exe</code>：GUI主程序，双击无黑框</li>
+<li><code>Gati_console.exe</code>：调试版本，输出运行日志，推荐学习优先使用</li>
+<li><code>gati.ini</code>：核心配置文件，控制所有功能开关</li>
+<li><code>gati_text.txt</code>：屏幕上显示的文本内容</li>
+<li><code>src/</code>：全部Go语言源代码目录</li>
+<li><code>build.sh</code>：Linux/macOS一键编译脚本</li>
+</ul>
+<p>程序运行后安装路径：<code>C:\\Users\\用户名\\AppData\\Roaming\\Gati\\</code></p>
+<ul>
+<li>gati-a.exe / gati-b.exe：双进程看门狗</li>
+<li>运行时配置、日志、心跳文件全部存放于此</li>
+</ul>
+<p>⚠️ 修改配置必须修改 <code>%APPDATA%\\Gati\\gati.ini</code>，程序启动时会把原始ini复制过去，原位文件修改无效！</p>`,
+      teaching: `<p><strong>教学解读：</strong></p>
+<ul>
+<li><code>Gati_console.exe</code> 是你学习时的最佳入口——有日志输出，能看到程序每一步在做什么</li>
+<li><code>AppData\\Roaming</code> 是用户级目录，不需要管理员权限就能写入，这也是它能"静默安装"的原因之一</li>
+<li>双进程（a/b）设计是看门狗的核心：两个进程互相监视，杀掉一个另一个立刻拉起来</li>
+<li>配置文件的"复制后修改"机制是一个常见陷阱——很多初学者改了原始ini发现不生效，就是因为程序用的是Roaming里的副本</li>
+</ul>`
+    },
+    {
+      id:"a3", title:"第3章 三分钟上手流程", badge:"safe", badgeText:"基础操作",
+      original: `<ol>
+<li>准备隔离Windows虚拟机（VMware/VirtualBox）</li>
+<li>双击 <code>Gati.exe</code>，屏幕出现全屏文字</li>
+<li>解锁热键：<code>Ctrl + Alt + Shift + G</code></li>
+<li>修改 <code>gati_text.txt</code> 保存，屏幕1秒内自动刷新文案</li>
+</ol>
+<p>推荐学习流程：优先使用 <code>Gati_console.exe -here -v</code> 本地运行，不写入自启动，不修改系统注册表，最安全。</p>`,
+      teaching: `<p><strong>教学解读：</strong></p>
+<p><code>-here</code> 参数的意义：程序在当前目录运行，不安装到 AppData，不写注册表，不创建计划任务。相当于"只读模式"，非常适合第一次接触时观察行为。</p>
+<p><code>-v</code> 是 verbose（详细日志），会打印每一步操作到控制台。</p>
+<p>解锁热键 <code>Ctrl+Alt+Shift+G</code> 是硬编码的——程序里写死了这个组合，没有配置项可以改（除非改源码重新编译）。</p>`
+    },
+    {
+      id:"a4", title:"第4章 屏幕显示 [display] 全参数详解", badge:"safe", badgeText:"配置解析",
+      original: `<p>所有参数位于 <code>gati.ini</code> 的 <code>[display]</code> 段落：</p>
+<table>
+<tr><th>参数</th><th>作用</th><th>取值范围</th></tr>
+<tr><td>window_count</td><td>全屏窗口数量，适配多显示器</td><td>1~8</td></tr>
+<tr><td>font_name</td><td>显示字体</td><td>微软雅黑、黑体等系统自带字体</td></tr>
+<tr><td>font_size</td><td>字号，程序自动缩小适配屏幕</td><td>24~300</td></tr>
+<tr><td>fg_color / bg_color</td><td>前景/背景色，RRGGBB十六进制</td><td>如FF2D2D红色、000000黑色</td></tr>
+<tr><td>mode</td><td>显示模式</td><td>static静态 / scroll滚动</td></tr>
+<tr><td>blink</td><td>文字闪烁开关</td><td>true / false</td></tr>
+<tr><td>reload_ms</td><td>重新读取文案文件间隔(毫秒)</td><td>最小200</td></tr>
+</table>
+<p>三组预设配色方案：</p>
+<pre># A.经典警告风（默认）
+fg_color=FF2D2D  bg_color=000000  mode=static
+# B.电影滚动字幕风
+fg_color=FFFFFF  bg_color=000000  mode=scroll
+# C.阴森闪烁风
+blink=true  blink_ms=1400</pre>`,
+      teaching: `<p><strong>教学解读：</strong></p>
+<p>这些参数展示了 Windows GUI 编程的几个基础概念：</p>
+<ul>
+<li><code>window_count</code>：多显示器环境下，每个屏幕创建一个全屏窗口覆盖，防止用户切到未覆盖的屏幕操作</li>
+<li><code>reload_ms</code>：轮询间隔，程序每隔这么长时间读一次 txt 文件。越小响应越快，但CPU占用越高</li>
+<li>颜色用 RRGGBB 十六进制——和 HTML/CSS 的颜色表示法完全一样，这是跨平台通用的颜色描述方式</li>
+</ul>`
+    },
+    {
+      id:"a5", title:"第5章 文案修改 gati_text.txt", badge:"safe", badgeText:"实时交互",
+      original: `<p>文件位置：<code>%APPDATA%\\Gati\\gati_text.txt</code></p>
+<ul>
+<li>支持换行、中文、特殊符号 ★ ⚠ 等</li>
+<li>保存后无需重启程序，1秒内屏幕自动更新（依靠reload_ms轮询）</li>
+<li>可配合bat脚本实现倒计时动态文案效果</li>
+</ul>`,
+      teaching: `<p><strong>教学解读：</strong>这种"外部文本文件驱动显示内容"的设计，在恶意软件中很常见——攻击者不需要重新编译程序，只需要修改配置文件就能改变行为。这也是为什么防御方会监控程序的配置文件修改行为。</p>
+<p>配合 bat 脚本做倒计时：本质是 bat 循环写入不同内容到 txt，程序自动刷新显示——展示了"外部脚本 + 程序热加载"的简单自动化思路。</p>`
+    },
+    {
+      id:"a6", title:"第6章 「关不掉」七层防护原理【核心重点】", badge:"danger", badgeText:"底层原理",
+      original: `<p><strong>第一层：全屏置顶窗口</strong></p>
+<p>使用 <code>WS_POPUP</code> 无边框窗口 + <code>WS_EX_TOPMOST</code> 置顶属性，每100ms调用一次置顶函数，强制覆盖其他窗口。</p>
+<p><strong>第二层：拦截窗口关闭消息</strong></p>
+<p>拦截 <code>WM_CLOSE</code>、<code>WM_SYSCOMMAND</code> 关闭指令，Alt+F4、窗口X按钮全部失效。</p>
+<p><strong>第三层：全局低级键盘钩子 WH_KEYBOARD_LL</strong></p>
+<p>系统级键盘钩子优先捕获按键，屏蔽：Win键、Alt+Tab、Ctrl+Shift+Esc、Alt+F4等。唯一无法拦截：Ctrl+Alt+Delete（内核级安全序列，用户态程序无权拦截）。</p>
+<p><strong>第四层：禁用任务管理器与注册表</strong></p>
+<p>修改注册表 <code>DisableTaskMgr=1</code>、<code>DisableRegistryTools=1</code>，即使调出任务管理器也会提示被禁用。</p>
+<p><strong>第五层：双进程互相守护看门狗</strong></p>
+<p>gati-a.exe 与 gati-b.exe 互相写入心跳文件，一方被结束，另一方8秒内自动重启对方。</p>
+<p><strong>第六层：三层独立自启动</strong></p>
+<p>注册表Run项、启动文件夹、计划任务，任意一条存活，重启系统后程序自动运行。</p>
+<p><strong>第七层：隐藏系统任务栏</strong></p>
+<p>查找并隐藏 <code>Shell_TrayWnd</code> 任务栏窗口，强化全屏视觉效果。</p>`,
+      teaching: `<div class="warn-box">⚠️ 这七层技术是"锁机软件"和"恶意程序"共用的底层手段。合法场景：信息亭(Kiosk)、考试系统、公共查询机。非法场景：勒索软件锁屏要赎金。</div>
+<p><strong>逐层教学解读：</strong></p>
+<p><strong>第一层</strong>：Windows 窗口层级中，<code>WS_EX_TOPMOST</code> 让窗口永远在最前面。每100ms重新置顶是为了防止其他程序也尝试置顶来覆盖它。</p>
+<p><strong>第二层</strong>：Windows 消息机制——当用户按 Alt+F4，系统发送 <code>WM_CLOSE</code> 消息给窗口。程序拦截这个消息，不响应，等于"装没听见"。</p>
+<p><strong>第三层</strong>：<code>WH_KEYBOARD_LL</code> 是"低级键盘钩子"，系统级生效——不管焦点在哪个窗口，按键先经过这个钩子。但 <code>Ctrl+Alt+Del</code> 是内核处理的"安全注意序列"(SAS)，用户态程序无法挂钩，这是 Windows 的安全设计。</p>
+<p><strong>第四层</strong>：通过写注册表 <code>HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System</code> 下的键值，告诉系统"禁止打开任务管理器"。这是组策略层面的限制。</p>
+<p><strong>第五层</strong>：心跳文件机制——A 写 <code>a.alive</code>，B 写 <code>b.alive</code>。如果 B 发现 a.alive 超过8秒没更新，说明 A 死了，立刻启动新的 A。</p>
+<p><strong>第六层</strong>：三个自启动路径互为备份——杀软清理了注册表Run，还有计划任务；清理了计划任务，还有启动文件夹。</p>
+<p><strong>第七层</strong>：<code>Shell_TrayWnd</code> 是 Windows 任务栏的窗口类名，找到它然后发送 <code>SW_HIDE</code> 隐藏。</p>`
+    },
+    {
+      id:"a7", title:"第7章 传播模块（默认关闭）", badge:"caution", badgeText:"文件复制",
+      original: `<p>开启方式：修改 <code>[worm]</code> 段落 <code>enabled=false → true</code>，重启程序生效（配置文件仅启动时读取一次）。</p>
+<p>传播范围参数：</p>
+<ul>
+<li>usb=true：复制至U盘、移动硬盘</li>
+<li>net_shares=true：复制至网络映射磁盘</li>
+<li>user_dirs=true：复制至桌面、文档、下载等用户目录</li>
+<li>depth：目录递归深度1~8</li>
+</ul>
+<p>防重复机制：复制前比对文件大小，不会无限自我复制撑满磁盘。</p>
+<p>⚠️ 该传播属于「文件级复制」，不利用系统漏洞；目标机器不会自动运行，必须人工双击exe。不属于真正意义的网络蠕虫。</p>`,
+      teaching: `<p><strong>教学解读：</strong></p>
+<p>为什么作者说"不属于真正意义的网络蠕虫"？计算机安全领域对"蠕虫"的严格定义是：<strong>能够自我传播且不需要人工干预</strong>。WannaCry 利用 MS17-010 漏洞自动扫描同网段445端口并植入，这才是蠕虫。</p>
+<p>Gati 的传播更像是"文件感染器"的简化版——它只是把自己拷贝到更多位置，等待倒霉的人去双击。传播效率极低，但教学价值在于展示了"自动复制"这个行为特征。</p>
+<p>防重复机制（比对文件大小）是一个工程细节：没有它，程序会在同一个U盘里无限复制自身，几秒钟撑满磁盘，反而暴露了自己。</p>`
+    },
+    {
+      id:"a8", title:"第8章 破坏模块（双闸门，不可逆）", badge:"danger", badgeText:"高危功能",
+      original: `<p>双重安全闸门（缺一不可）：</p>
+<ul>
+<li>闸门一：<code>enabled=true</code></li>
+<li>闸门二：<code>confirm=DELETE-EVERYTHING</code>（严格大小写）</li>
+</ul>
+<p>执行前15秒倒计时，倒计时内按下解锁热键可中止。</p>
+<p>破坏行为顺序：</p>
+<ol>
+<li>删除系统卷影副本，关闭系统还原</li>
+<li>递归覆写指定目录文件（随机数据覆写3遍）</li>
+<li>覆写磁盘MBR引导记录</li>
+<li>可选：填充磁盘空间</li>
+</ol>
+<p>🚨 严重警告：文件覆写、MBR破坏完全不可逆！无软件可以恢复数据，仅能依靠备份。</p>`,
+      teaching: `<div class="warn-box">🚨 学习阶段绝对不要开启此模块！覆写3遍意味着即使专业数据恢复服务也无法还原。</div>
+<p><strong>教学解读：</strong></p>
+<ul>
+<li><strong>双闸门设计</strong>：即使不小心把 enabled 改成 true，没有第二道 confirm 字符串，破坏不会执行。这是"纵深防御"思想在恶意软件中的体现——作者刻意增加操作门槛。</li>
+<li><strong>删除卷影副本</strong>：Windows 系统还原依赖卷影副本(VSS)，删除后无法"还原到之前的版本"。这是勒索软件的标准操作。</li>
+<li><strong>覆写3遍</strong>：DoD 5220.22-M 标准，单次覆写后数据理论上可被专业设备恢复，3遍以上基本不可恢复。</li>
+<li><strong>MBR覆写</strong>：主引导记录位于磁盘第一个扇区，覆写后系统无法启动，需要PE启动盘修复。</li>
+</ul>`
+    },
+    {
+      id:"a9", title:"第9章 三种解除与清理方案", badge:"safe", badgeText:"应急操作",
+      original: `<ul>
+<li><strong>方法一（首选）：解锁热键</strong> <code>Ctrl+Alt+Shift+G</code>，自动恢复注册表、删除自启动、结束双进程</li>
+<li><strong>方法二：安全模式</strong>，强制关机三次进入修复模式，绕过键盘钩子</li>
+<li><strong>方法三：手动命令行清理</strong>，依次结束进程、删除注册表项、删除计划任务、清空Gati安装目录</li>
+</ul>
+<p>若破坏模块已经执行：MBR损坏需要PE启动盘修复引导；覆写文件无法恢复，只能依靠备份。</p>`,
+      teaching: `<p><strong>教学解读：</strong></p>
+<p><strong>为什么安全模式能绕过？</strong>安全模式下 Windows 只加载最基本的驱动和服务，Gati 的自启动项（注册表Run/计划任务）在安全模式下可能不会执行，键盘钩子也不会加载。这就给了用户操作空间。</p>
+<p><strong>解锁热键的"干净撤退"</strong>：程序退出时做了完整的清理工作——恢复注册表、删除自启动项、结束所有相关进程、删除安装目录。这展示了"优雅退出"的编程思想。</p>`
+    },
+    {
+      id:"a10", title:"第10章 常见问题 FAQ", badge:"safe", badgeText:"排错指南",
+      original: `<ul>
+<li>Q：双击无反应？A：查看 <code>gati.log</code> 日志，大概率被杀毒软件拦截</li>
+<li>Q：文字显示方框？A：字体设置错误，修改为微软雅黑、黑体</li>
+<li>Q：修改ini不生效？A：配置文件仅启动时加载，需要解锁后重启程序；文案txt支持热更新</li>
+<li>Q：会被Windows Defender查杀吗？A：会，钩子+自启动+注册表修改符合恶意行为特征</li>
+</ul>`,
+      teaching: `<p><strong>教学解读：</strong></p>
+<p>杀毒软件为什么报？因为它检测到的行为组合（键盘钩子 + 修改注册表禁用任务管理器 + 创建自启动 + 双进程互相守护）与已知恶意软件的行为特征高度重合。这就是"基于行为的检测"——不管你的程序初衷是什么，行为像病毒就会被拦截。</p>`
+    },
+    {
+      id:"a11", title:"第11章 源码结构 + 五种改造思路", badge:"caution", badgeText:"代码学习",
+      original: `<table>
+<tr><th>文件</th><th>功能</th></tr>
+<tr><td>main.go</td><td>程序入口、模块启动</td></tr>
+<tr><td>config.go</td><td>ini配置解析</td></tr>
+<tr><td>display.go</td><td>窗口绘制、全屏显示</td></tr>
+<tr><td>hook.go</td><td>键盘钩子、解锁逻辑</td></tr>
+<tr><td>persist.go</td><td>自启动、看门狗、注册表锁定</td></tr>
+<tr><td>worm.go</td><td>传播模块</td></tr>
+<tr><td>destroy.go</td><td>破坏模块</td></tr>
+</table>
+<p>5个教学改造方向：修改解锁热键 / 增加WAV音效循环播放 / 添加口令解锁机制 / 多文案自动轮换 / 自定义传播投放文件名</p>`,
+      teaching: `<p><strong>教学解读：</strong>这种单文件按功能拆分的架构是 Go 语言项目的典型结构。每个 .go 文件职责单一，方便阅读和学习。改造方向中，"添加口令解锁"是最有价值的安全练习——涉及字符串比对、输入处理、超时锁定等编程基础。</p>`
+    },
+    {
+      id:"a12", title:"第12章 编译方法", badge:"safe", badgeText:"开发环境",
+      original: `<p>依赖：Go 1.21+</p>
+<pre># GUI版本（无黑框）
+GOOS=windows GOARCH=amd64 CGO_ENABLED=0 \\
+go build -trimpath -ldflags "-s -w -H=windowsgui" -o Gati.exe .
+
+# 调试控制台版本
+go build -trimpath -ldflags "-s -w" -o Gati_console.exe .</pre>
+<p>常用参数：<code>-here</code> 本地运行不安装、<code>-dry-run</code> 预览配置不执行、<code>-unlock</code> 紧急解锁。</p>`,
+      teaching: `<p><strong>教学解读：</strong></p>
+<ul>
+<li><code>-H=windowsgui</code>：告诉 Go 编译器生成 Windows GUI 程序，不分配控制台窗口。去掉这个参数就会弹出黑框</li>
+<li><code>-s -w</code>：去掉符号表和调试信息，减小文件体积，同时增加逆向难度</li>
+<li><code>CGO_ENABLED=0</code>：纯 Go 编译，不依赖 MinGW 等 C 编译器</li>
+</ul>`
+    },
+    {
+      id:"a13", title:"第13章 已知限制", badge:"safe", badgeText:"边界说明",
+      original: `<ul>
+<li>无法拦截 Ctrl+Alt+Delete</li>
+<li>主流杀毒软件会拦截该程序</li>
+<li>覆写MBR需要管理员权限</li>
+<li>仅支持已映射盘符的网络共享，不主动扫描内网</li>
+<li>配置文件修改必须重启进程生效</li>
+</ul>`,
+      teaching: `<p><strong>教学解读：</strong>这些"限制"实际上也是防御的突破口。比如：无法拦截 Ctrl+Alt+Del → 这是用户逃生的最后通道；需要管理员权限才能覆写MBR → UAC 就是一道防线。</p>`
+    },
+    {
+      id:"a14", title:"第14章 最后几句实话（作者忠告）", badge:"danger", badgeText:"安全准则",
+      original: `<ul>
+<li>程序技术难点在于「稳定锁屏+完整撤退」，而非破坏能力</li>
+<li>传播、破坏模块默认关闭，规避误操作风险</li>
+<li>仅可在自己可控的虚拟机环境学习，严禁在公共设备运行</li>
+<li>破坏模块不可逆，没有后悔机制</li>
+</ul>`,
+      teaching: `<div class="warn-box">⚠️ 法律提醒：即使初衷是学习，在他人电脑、学校机房、公共设备上运行此类程序，造成系统异常即构成"破坏计算机信息系统"，可追究法律责任。</div>
+<p><strong>教学总结：</strong>版本A的 Gati 是一个优秀的"反面教材"——它展示了 Windows 系统编程的多个技术点（窗口管理、钩子、注册表、进程守护），但所有技术都是双刃剑。同样的代码，用在信息亭是合法产品，用在别人电脑上是违法行为。</p>`
+    },
+  ]
+};
+
+const versionB = {
+  title: "版本B · 远控框架 Gati RAT",
+  nav: [
+    {id:"b0", label:"第0章 概述"},
+    {id:"b1", label:"第1章 架构总览"},
+    {id:"b2", label:"第2章 编译与部署"},
+    {id:"b3", label:"第3章 客户端启动流程"},
+    {id:"b4", label:"第4章 持久化机制"},
+    {id:"b5", label:"第5章 权限提升"},
+    {id:"b6", label:"第6章 反分析/反沙箱"},
+    {id:"b7", label:"第7章 C2通信协议"},
+    {id:"b8", label:"第8章 指令系统"},
+    {id:"b9", label:"第9章 文件操作"},
+    {id:"b10", label:"第10章 勒索模块"},
+    {id:"b11", label:"第11章 横向传播"},
+    {id:"b12", label:"第12章 防御规避"},
+    {id:"b13", label:"第13章 日志与取证"},
+    {id:"b14", label:"第14章 检测规则"},
+    {id:"b15", label:"第15章 蓝队视角"},
+    {id:"b16", label:"第16章 红队视角"},
+    {id:"b17", label:"第17章 法律边界"},
+    {id:"b18", label:"第18章 已知弱点"},
+    {id:"b19", label:"第19章 教学用法"},
+    {id:"b20", label:"第20章 附录A 术语表"},
+    {id:"b21", label:"第21章 附录B 参考"},
+  ],
+  modules: [
+    {
+      id:"b0", title:"第0章 概述", badge:"danger", badgeText:"高危样本",
+      original: `<p>Gati 是一套完整的 Windows 远控框架（RAT + 勒索 + 横向传播），由 Go 编译的客户端（Gati.exe）和 Python C2 服务端组成。</p>
+<p>能力矩阵：</p>
+<ul>
+<li>反向 HTTPS C2 心跳通信</li>
+<li>AES-256-GCM + RSA 密钥托管加密</li>
+<li>七路持久化（注册表/计划任务/服务/IFEO等）</li>
+<li>fodhelper UAC 绕过提权</li>
+<li>反沙箱退避（指数休眠）</li>
+<li>U盘 + 局域网 SMB 横向传播</li>
+<li>勒索模块（加密文件 + 密钥托管）</li>
+</ul>
+<p>综合定级：严重级（RAT+勒索+横向移动框架）。教学场景为高危敏感样本。</p>`,
+      teaching: `<p><strong>教学解读：</strong>这是和版本A（恶搞蠕虫）的<strong>本质区别</strong>。版本A是单机离线恶搞；版本B是完整的"武器级"远控框架，具备真实APT攻击工具的所有特征。</p>
+<p>关键词拆解：</p>
+<ul>
+<li><strong>RAT</strong>（Remote Access Trojan）：远程访问木马，攻击者可以远程执行命令、窃取文件</li>
+<li><strong>反向C2</strong>：被控机主动向外连接，绕过防火墙入站限制</li>
+<li><strong>七路持久化</strong>：7种不同的自启动方式，杀掉1-2种仍有其他存活</li>
+<li><strong>UAC绕过</strong>：不需要用户输入管理员密码就能提权</li>
+</ul>`
+    },
+    {
+      id:"b1", title:"第1章 架构总览", badge:"danger", badgeText:"架构",
+      original: `<p>整体架构：</p>
+<pre>
+[受害机 Gati.exe] ←→ HTTPS(8443) ←→ [C2 Server: c2_server.py]
+                                      ↑
+                                [攻击者控制台]
+</pre>
+<p>客户端（Gati.exe）：Go 编译，Windows GUI，落地后隐藏自身到 <code>%APPDATA%\\MicrosoftEdgeUpdate\\msedgeupd.exe</code>。</p>
+<p>服务端（c2_server.py）：Python HTTPS 监听，交互式命令行控制台，管理所有上线 agent。</p>
+<p>通信协议：AES-256-GCM 加密 + HMAC-SHA256 签名，master key 编译期注入，不通过网络传输。</p>`,
+      teaching: `<p><strong>教学解读：</strong></p>
+<p>三层架构是经典 RAT 设计：</p>
+<ul>
+<li><strong>客户端（植入物）</strong>：运行在受害者机器上，负责执行命令、回传数据</li>
+<li><strong>C2 服务端（中转站）</strong>：接收所有 agent 的连接，存储任务队列</li>
+<li><strong>操作员控制台</strong>：攻击者用来发指令的界面</li>
+</ul>
+<p>加密设计要点：master key 编译进 exe，不在网络中传输——即使抓到流量包，没有 master key 也无法解密通信内容。这是"预共享密钥"模式。</p>`
+    },
+    {
+      id:"b2", title:"第2章 编译与部署", badge:"caution", badgeText:"部署",
+      original: `<p>客户端编译：</p>
+<pre>CGO_ENABLED=0 GOOS=windows GOARCH=amd64 \\
+go build -ldflags "-s -w -X main.BuildC2=1.2.3.4:8443 -X main.BuildPath=/api/v2/sync" \\
+-o Gati.exe .</pre>
+<p>服务端启动：</p>
+<pre>python3 c2_server.py --cert keys/cert.pem --key keys/cert.key \\
+--master '64位hex密钥' --port 8443 --console</pre>
+<p>⚠️ 教学环境：仅限断网虚拟机，使用 <code>-skipcheck</code> 跳过反分析检测。</p>`,
+      teaching: `<p><strong>教学解读：</strong></p>
+<ul>
+<li><code>-X main.BuildC2=...</code>：编译期注入 C2 地址，硬编码进 exe。这意味着每个样本的 C2 地址不同，需要重新编译才能改</li>
+<li><code>-skipcheck</code>：跳过虚拟机/调试器检测，方便在虚拟机中正常运行分析</li>
+<li>自签证书：服务端使用自签名 TLS 证书，客户端 <code>InsecureSkipVerify: true</code> 不验证证书有效性——这是一个弱点，也是检测点</li>
+</ul>`
+    },
+    {
+      id:"b3", title:"第3章 客户端启动流程", badge:"danger", badgeText:"执行链",
+      original: `<p>启动顺序（九阶段）：</p>
+<ol>
+<li>单实例锁（<code>%APPDATA%\\MicrosoftEdgeUpdate\\.lck</code>）</li>
+<li>反分析打分（检测调试器/虚拟机/沙箱）</li>
+<li>关闭防御（停 Defender 实时监视、AMSI、ETW、降 UAC）</li>
+<li>落地复制（自身复制到隐藏目录，设 HIDDEN+SYSTEM 属性）</li>
+<li>提权（fodhelper UAC 绕过）</li>
+<li>七路持久化</li>
+<li>看门狗（定时检查自身存活）</li>
+<li>C2 主循环（HTTPS beacon 心跳）</li>
+<li>等待指令执行</li>
+</ol>
+<p>⚠️ 第3-7步在落地瞬间即执行，不需要C2发指令。</p>`,
+      teaching: `<div class="warn-box">⚠️ 关键认知：即使 C2 服务端没有发任何指令，Gati 启动后已经完成了"削弱防御+建立持久化+提权+外连"——系统完整性已被破坏。</div>
+<p><strong>教学解读：</strong></p>
+<p>这九阶段展示了现代恶意软件的"标准化攻击链"：</p>
+<ul>
+<li>步骤1-2：确保只有一个实例在跑，同时检测是否在分析环境中</li>
+<li>步骤3：先削弱防御再干活——关 Defender 后后续操作就不会被杀软拦截</li>
+<li>步骤4-6：建立持久化驻留，确保重启后还能活</li>
+<li>步骤7-9：进入"待命"状态，等待远程指令</li>
+</ul>`
+    },
+    {
+      id:"b4", title:"第4章 持久化机制", badge:"danger", badgeText:"持久化",
+      original: `<p>七路持久化：</p>
+<ul>
+<li>① 注册表 Run 键：<code>HKCU\\...\\Run\\MicrosoftEdgeUpdate</code></li>
+<li>② 启动文件夹：<code>%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\</code></li>
+<li>③ 计划任务：创建每日触发任务</li>
+<li>④ 服务注册：注册为系统服务自动启动</li>
+<li>⑤ IFEO 映像劫持：<code>sethc.exe</code>（粘滞键后门）</li>
+<li>⑥ IFEO utilman.exe 劫持</li>
+<li>⑦ 看门狗进程互相拉起</li>
+</ul>
+<p>任意一条存活即可保证重启后运行。</p>`,
+      teaching: `<p><strong>教学解读：</strong></p>
+<p><strong>IFEO（Image File Execution Options）</strong> 是 Windows 的"映像劫持"机制，原本用于调试——当某个程序启动时，系统先运行你指定的"调试器"。Gati 把 <code>sethc.exe</code>（粘滞键，按5次Shift触发）的 Debugger 指向自己，这样用户按5次Shift就会启动 Gati 而不是粘滞键——这就是经典的"粘滞键后门"。</p>
+<p>七路设计的意义：蓝队清理时可能发现并删除2-3种，但很难一次全部清除。这就是"冗余持久化"的防御对抗思路。</p>`
+    },
+    {
+      id:"b5", title:"第5章 权限提升", badge:"danger", badgeText:"提权",
+      original: `<p>fodhelper.exe UAC 绕过：</p>
+<ul>
+<li>利用 Windows 自带 fodhelper.exe（"打开方式"对话框辅助程序）</li>
+<li>该exe自动以高完整性级别运行，且允许通过注册表指定打开的程序</li>
+<li>Gati 写入特定注册表项，让 fodhelper 启动自身</li>
+<li>结果：无需用户确认UAC弹窗，直接获取管理员权限</li>
+</ul>
+<p>前提：目标系统开启了 UAC（默认开启），但用户是管理员组成员。</p>`,
+      teaching: `<p><strong>教学解读：</strong></p>
+<p>这是 Windows UAC 绕过的一个经典手法（CVE-2017-0312 系列）。原理：</p>
+<ol>
+<li>fodhelper.exe 是微软签名的系统程序，manifest 声明 <code>autoElevate=true</code></li>
+<li>它以高完整性级别启动，且不会弹 UAC 确认框</li>
+<li>它通过注册表 <code>HKCU\\Software\\Classes\\ms-settings\\shell\\open\\command</code> 读取要执行的命令</li>
+<li>因为 HKCU 是用户可写的，攻击者可以修改这个键值指向自己的程序</li>
+<li>fodhelper 启动时就会以高权限执行攻击者的程序</li>
+</ol>
+<p>防御：监控 HKCU 下 Classes 注册表异常写入。</p>`
+    },
+    {
+      id:"b6", title:"第6章 反分析/反沙箱", badge:"caution", badgeText:"对抗",
+      original: `<p>反分析检测项：</p>
+<ul>
+<li>检测调试器（IsDebuggerPresent / CheckRemoteDebuggerPresent）</li>
+<li>检测虚拟机（MAC地址前缀、CPU厂商、BIOS信息）</li>
+<li>检测沙箱（分析工具进程名、低磁盘空间、低内存）</li>
+<li>检测时间加速（rdtsc 指令周期检测）</li>
+</ul>
+<p>退避策略：发现沙箱后进入指数退避休眠——90秒→3分钟→12分钟→48分钟，消耗分析时间。</p>
+<p>评分机制：多项检测累加分数，超过阈值触发退避。</p>`,
+      teaching: `<p><strong>教学解读：</strong></p>
+<p>恶意软件为什么要反分析？沙箱和分析师环境有共同特征：</p>
+<ul>
+<li>虚拟机：MAC 地址以 00:05:69 / 00:0C:29（VMware）开头</li>
+<li>沙箱：磁盘通常很小（&lt;60GB），内存有限</li>
+<li>调试器：进程列表中有 x64dbg、IDA、Wireshark 等</li>
+</ul>
+<p>指数退避的意义：如果只睡固定时间（比如5分钟），沙箱可以设置超时10分钟等待它醒来。但指数退避让沙箱"等不起"——48分钟后沙箱可能已经判定"无害"并销毁了样本。</p>`
+    },
+    {
+      id:"b7", title:"第7章 C2通信协议", badge:"danger", badgeText:"协议",
+      original: `<p>通信流程：</p>
+<ul>
+<li>传输层：HTTPS TLS（自签证书，InsecureSkipVerify）</li>
+<li>UA伪装：Chrome 126</li>
+<li>路径：<code>POST /api/v2/sync</code></li>
+<li>加密：AES-256-GCM，nonce 12字节 + 密文</li>
+<li>认证：HMAC-SHA256 签名，X-Gati-Sig 头</li>
+<li>会话密钥派生：<code>SHA256(master | "session" | machineID)</code></li>
+</ul>
+<p>心跳间隔：随机 45~75 秒，避免固定周期被流量分析发现。</p>
+<p>machineID：<code>SHA256(主机名|卷序列号|用户名)</code> 前16位大写，绑定设备。</p>`,
+      teaching: `<p><strong>教学解读：</strong></p>
+<ul>
+<li><strong>为什么用 HTTPS？</strong> 流量加密，网络层看不到具体内容；且 443 端口通常不会被防火墙拦截</li>
+<li><strong>UA 伪装</strong>：让流量看起来像正常浏览器访问，混入海量 Chrome 流量中难以区分</li>
+<li><strong>machineID 绑定</strong>：每台机器有唯一 ID，C2 可以区分不同 agent；同时防止重放攻击——截获一个包在其他机器上重放，因为 machineID 不同，解密失败</li>
+<li><strong>随机心跳间隔</strong>：固定间隔是网络检测的经典特征。随机化让流量看起来更像"人类行为"而非"机器定时任务"</li>
+</ul>`
+    },
+    {
+      id:"b8", title:"第8章 指令系统", badge:"danger", badgeText:"远控",
+      original: `<p>支持的指令类型：</p>
+<table>
+<tr><th>指令</th><th>功能</th></tr>
+<tr><td>cmd</td><td>执行 cmd.exe /c 命令</td></tr>
+<tr><td>ps</td><td>执行 PowerShell 脚本</td></tr>
+<tr><td>loot</td><td>窃取指定文件</td></tr>
+<tr><td>ransom</td><td>触发勒索加密</td></tr>
+<tr><td>spread</td><td>触发横向传播</td></tr>
+<tr><td>uninstall</td><td>自清理卸载</td></tr>
+</table>
+<p>指令下发方式：服务端加密后放入响应，客户端下次 beacon 拉取。</p>
+<p>执行结果随下一个 beacon 回传。</p>`,
+      teaching: `<p><strong>教学解读：</strong></p>
+<p>这是典型的"异步命令执行"模型——不像 SSH 那样实时交互，而是：</p>
+<pre>心跳 → 拉指令 → 执行 → 下次心跳 → 回传结果</pre>
+<p>优点：不需要维持长连接，防火墙友好，隐蔽性高。缺点：命令执行有延迟（最多等一个心跳周期）。</p>
+<p><code>loot</code> 指令是数据窃取的核心——攻击者指定文件路径模式（如 <code>*.docx</code>），客户端打包加密后回传。</p>`
+    },
+    {
+      id:"b9", title:"第9章 文件操作", badge:"danger", badgeText:"窃密",
+      original: `<p>文件操作能力：</p>
+<ul>
+<li>遍历目录、列文件列表</li>
+<li>读取指定文件内容（支持通配符）</li>
+<li>打包压缩后加密回传</li>
+<li>写入文件到目标路径</li>
+<li>删除文件</li>
+</ul>
+<p>目标路径限制：默认只访问用户目录（Desktop/Documents/Downloads），提权后可访问全盘。</p>`,
+      teaching: `<p><strong>教学解读：</strong>文件窃取是 RAT 最常见的目的之一。攻击者通常先 <code>cmd dir</code> 看看目录结构，再用 <code>loot *.docx</code> 批量打包回传。加密回传保证即使流量被截获，内容也不会泄露。</p>`
+    },
+    {
+      id:"b10", title:"第10章 勒索模块", badge:"danger", badgeText:"勒索",
+      original: `<p>勒索机制：</p>
+<ul>
+<li>触发：C2 下发 <code>ransom</code> 指令</li>
+<li>加密算法：AES-256-GCM（每文件随机密钥）+ RSA 封装密钥</li>
+<li>密钥托管：主密钥由 C2 服务端保管，客户端本地清零</li>
+<li>文件类型：遍历用户文档目录，加密常见文档/图片/数据库</li>
+<li>后缀：追加 <code>.gati</code></li>
+<li>勒索信息：桌面生成 <code>README_GATI.txt</code></li>
+</ul>
+<p>⚠️ 与版本A破坏模块的区别：版本B是AES加密（可恢复，有密钥），版本A是随机数据覆写（不可逆）。</p>`,
+      teaching: `<div class="warn-box">⚠️ 这是真正的勒索软件行为。一旦触发，没有C2服务端上的主密钥，文件无法恢复。</div>
+<p><strong>教学解读：</strong></p>
+<ul>
+<li><strong>为什么用 AES+RSA 混合？</strong> AES 加密文件速度快，RSA 用来加密 AES 密钥。这样每个文件用不同 AES 密钥，但攻击者只需要保管一个 RSA 私钥</li>
+<li><strong>密钥托管</strong>：主密钥在 C2 上，不在受害机上——即使拿到被加密的文件，本地没有密钥也无法解密</li>
+<li><strong>和版本A的区别</strong>：版本A的覆写是"毁掉数据"，版本B的加密是"锁住数据换赎金"——后者有明确的犯罪经济动机</li>
+</ul>`
+    },
+    {
+      id:"b11", title:"第11章 横向传播", badge:"danger", badgeText:"传播",
+      original: `<p>传播方式：</p>
+<ul>
+<li><strong>U盘传播</strong>：写入 Autorun.inf + 伪装exe，利用自动播放（老系统）</li>
+<li><strong>局域网SMB</strong>：扫描同网段445端口，尝试空口令/弱口令登录，复制自身到共享目录</li>
+<li><strong>计划任务远程创建</strong>：在有写权限的远程机器上创建计划任务执行载荷</li>
+</ul>
+<p>触发条件：C2 下发 <code>spread usb</code> 或 <code>spread smb</code> 指令。</p>`,
+      teaching: `<p><strong>教学解读：</strong></p>
+<p>这和版本A的"文件复制"有本质区别：</p>
+<ul>
+<li>版本A：拷贝文件到U盘/目录，等人工双击</li>
+<li>版本B：主动扫描网络、尝试弱口令、远程创建计划任务——<strong>全自动，不需要人工干预</strong></li>
+</ul>
+<p>这正是"蠕虫"的定义特征。如果配合 MS17-010（永恒之蓝）漏洞利用，传播速度会呈指数级增长——这就是 WannaCry 的破坏力来源。</p>`
+    },
+    {
+      id:"b12", title:"第12章 防御规避", badge:"caution", badgeText:"规避",
+      original: `<p>规避手段：</p>
+<ul>
+<li>进程注入：远程线程注入 explorer.exe，隐藏自身进程</li>
+<li>ETW 禁用：关闭 Windows 事件追踪</li>
+<li>AMSI 绕过：禁用 Antimalware Scan Interface</li>
+<li>文件隐藏：HIDDEN + SYSTEM 属性</li>
+<li>无文件执行：shellcode 注入内存，不落盘</li>
+<li>字符串加密：关键字符串 XOR 运行时解密</li>
+</ul>`,
+      teaching: `<p><strong>教学解读：</strong></p>
+<ul>
+<li><strong>ETW</strong>（Event Tracing for Windows）：Windows 内置的事件追踪系统，EDR 用它来监控进程行为。禁用 ETW 等于"关掉监控摄像头"</li>
+<li><strong>AMSI</strong>：反恶意软件扫描接口，PowerShell 脚本执行前会经过 AMSI 扫描。绕过 AMSI 后，恶意 PS 脚本不会被检测</li>
+<li><strong>进程注入</strong>：把自己的代码注入到 explorer.exe（系统进程）中执行，任务管理器里看不到 Gati 的进程名</li>
+</ul>`
+    },
+    {
+      id:"b13", title:"第13章 日志与取证", badge:"safe", badgeText:"蓝队",
+      original: `<p>取证关键点：</p>
+<ul>
+<li>进程：查找 msedgeupd.exe（非Edge官方进程）</li>
+<li>网络：检查 8443 端口外连、/api/v2/sync 路径</li>
+<li>注册表：Run键、IFEO项、DisableRealtimeMonitoring</li>
+<li>文件：<code>%APPDATA%\\MicrosoftEdgeUpdate\\</code> 目录</li>
+<li>计划任务：查找异常每日触发任务</li>
+<li>事件日志：PowerShell 执行日志、服务创建事件</li>
+</ul>`,
+      teaching: `<p><strong>教学解读：</strong>蓝队排查的核心思路——不管恶意软件怎么隐藏，总会留下痕迹。关键是知道去哪里找：注册表自启项、计划任务、异常网络外连、非标准路径下的exe文件。</p>`
+    },
+    {
+      id:"b14", title:"第14章 检测规则", badge:"safe", badgeText:"蓝队",
+      original: `<p>YARA 规则示例特征：</p>
+<ul>
+<li>字符串：<code>MicrosoftEdgeUpdate</code>、<code>msedgeupd.exe</code>、<code>/api/v2/sync</code></li>
+<li>导入表：<code>CreateRemoteThread</code>、<code>VirtualAllocEx</code></li>
+<li>注册表路径：<code>DisableRealtimeMonitoring</code>、<code>sethc.exe</code></li>
+<li>网络特征：TLS 指纹（JA3S）、固定 UA "Chrome/126"、心跳间隔45-75s</li>
+</ul>`,
+      teaching: `<p><strong>教学解读：</strong>YARA 是恶意软件分析师用来"搜索特征"的工具，类似正则表达式但针对二进制文件。上面列出的字符串就是"指纹"——即使文件被加壳或改名，这些特征字符串可能仍然存在。</p>`
+    },
+    {
+      id:"b15", title:"第15章 蓝队视角", badge:"safe", badgeText:"防御",
+      original: `<p>防御建议：</p>
+<ul>
+<li>启用 Defender 实时保护 + 云查杀</li>
+<li>网络层：监控异常外连（非浏览器进程的443流量）</li>
+<li>主机层：审计注册表 Run 项变更、计划任务创建</li>
+<li>终端EDR：检测远程线程注入、AMSI 禁用行为</li>
+<li>用户教育：不运行来历不明的 exe</li>
+</ul>`,
+      teaching: `<p><strong>教学解读：</strong>纵深防御——网络层、主机层、应用层、人员层，每一层都是一道防线。任何单一防线都可能被绕过，多层叠加才能有效防御。</p>`
+    },
+    {
+      id:"b16", title:"第16章 红队视角", badge:"caution", badgeText:"攻击",
+      original: `<p>红队使用注意事项：</p>
+<ul>
+<li>仅限授权渗透测试环境</li>
+<li>使用 <code>-skipcheck</code> 在隔离环境运行</li>
+<li>反向编写检测规则（以攻促防）</li>
+<li>测试完成后使用 <code>uninstall</code> 指令清理</li>
+</ul>`,
+      teaching: `<p><strong>教学解读：</strong>红队的核心方法论——"了解攻击才能做好防御"。通过研究 Gati 的每一层技术，反向推导出检测规则，这才是这份说明书的教学价值所在。</p>`
+    },
+    {
+      id:"b17", title:"第17章 法律边界", badge:"danger", badgeText:"法律",
+      original: `<ul>
+<li>在自己虚拟机中断网分析 = 合法教学</li>
+<li>在真实他人机器上运行 = 非法控制计算机信息系统（刑法285条）</li>
+<li>开启勒索模块真加密 = 刑事案件</li>
+<li>传播给他人 = 提供侵入、非法控制计算机信息系统程序、工具罪</li>
+</ul>`,
+      teaching: `<div class="warn-box">⚠️ 重申：技术无罪，使用场景有罪。同样的代码知识，用于CTF/课程是学习，用于他人机器是犯罪。</div>`
+    },
+    {
+      id:"b18", title:"第18章 已知弱点", badge:"safe", badgeText:"弱点",
+      original: `<ul>
+<li>Go 编译特征明显（5.3MB+，高熵值）</li>
+<li>自签 TLS 证书 + InsecureSkipVerify</li>
+<li>固定路径 <code>/api/v2/sync</code></li>
+<li>明文字符串（msedgeupd、sethc等）</li>
+<li>心跳间隔规律（45-75s）</li>
+<li>原版打不过 360 等现代杀软</li>
+</ul>`,
+      teaching: `<p><strong>教学解读：</strong>这些弱点就是蓝队检测的依据。比如"Go 编译特征"——杀软看到 5MB+ 的 Go 二进制文件，且导入表中有网络相关函数，会提高启发式评分。</p>`
+    },
+    {
+      id:"b19", title:"第19章 教学用法", badge:"safe", badgeText:"教学",
+      original: `<p>推荐教学路径：</p>
+<ol>
+<li>静态分析：读源码，理解每模块功能</li>
+<li>断网虚拟机运行调试版 <code>-skipcheck</code></li>
+<li>Wireshark 抓包分析 C2 通信（如有C2环境）</li>
+<li>反向编写 YARA 检测规则</li>
+<li>对比版本A，理解"恶搞"与"真实威胁"的区别</li>
+</ol>`,
+      teaching: `<p><strong>教学解读：</strong>从静态到动态、从攻击到防御，形成完整的学习闭环。版本A适合入门理解Windows编程基础，版本B适合进阶学习真实RAT架构。</p>`
+    },
+    {
+      id:"b20", title:"第20章 附录A 术语表", badge:"safe", badgeText:"术语",
+      original: `<table>
+<tr><th>术语</th><th>解释</th></tr>
+<tr><td>RAT</td><td>远程访问木马 Remote Access Trojan</td></tr>
+<tr><td>C2</td><td>命令与控制 Command & Control</td></tr>
+<tr><td>Beacon</td><td>被控机定期发送的"心跳"信号</td></tr>
+<tr><td>UAC</td><td>用户账户控制 User Account Control</td></tr>
+<tr><td>IFEO</td><td>映像文件执行选项 Image File Execution Options</td></tr>
+<tr><td>AMSI</td><td>反恶意软件扫描接口</td></tr>
+<tr><td>ETW</td><td>Windows事件追踪 Event Tracing for Windows</td></tr>
+<tr><td>AES-GCM</td><td>高级加密标准-伽罗瓦/计数器模式</td></tr>
+<tr><td>HMAC</td><td>基于哈希的消息认证码</td></tr>
+</table>`,
+      teaching: `<p><strong>教学解读：</strong>这些是网络安全领域的核心术语，掌握后阅读其他恶意软件分析报告时不会遇到障碍。</p>`
+    },
+    {
+      id:"b21", title:"第21章 附录B 参考", badge:"safe", badgeText:"参考",
+      original: `<ul>
+<li>MITRE ATT&CK T1053（计划任务）、T1547（自启动）、T1548（提权）</li>
+<li>Cobalt Strike Malleable C2 Profile 设计参考</li>
+<li>Go os/exec、syscall 标准库文档</li>
+<li>Windows WFP（Windows Filtering Platform）网络过滤</li>
+</ul>`,
+      teaching: `<p><strong>教学解读：</strong>MITRE ATT&CK 是网络安全行业的"攻击技战术知识库"，每个 T 编号对应一种攻击技术。学习时可以对照 ATT&CK 框架，把 Gati 的每项能力映射到对应编号，建立体系化认知。</p>`
+    },
+  ]
+};
+
+// ============ LOGIC ============
+
+let currentTab = 'version-a';
+
+function openModal() { document.getElementById('modal').classList.add('active'); }
+function closeModal() { document.getElementById('modal').classList.remove('active'); }
+document.getElementById('modal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach((btn,i)=>{
+    btn.classList.toggle('active', (i===0 && tab==='version-a') || (i===1 && tab==='version-b'));
+  });
+  renderSidebar();
+  renderContent();
+}
+
+function renderSidebar() {
+  const data = currentTab === 'version-a' ? versionA : versionB;
+  const sb = document.getElementById('sidebar');
+  let html = `<div class="sidebar-card"><h3>${data.title}</h3>`;
+  data.nav.forEach(item => {
+    html += `<a href="#${item.id}" onclick="scrollToModule('${item.id}')">${item.label}</a>`;
+  });
+  html += `</div>`;
+  sb.innerHTML = html;
+}
+
+function renderContent() {
+  const data = currentTab === 'version-a' ? versionA : versionB;
+  const mc = document.getElementById('main-content');
+  let html = '';
+  data.modules.forEach(m => {
+    html += `
+    <div class="module" id="${m.id}">
+      <div class="module-header" onclick="toggleModule(this)">
+        <div class="module-header-left">
+          <h2>${m.title}</h2>
+          <span class="badge ${m.badge}">${m.badgeText}</span>
+        </div>
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="module-body">
+        <div class="original">
+          <span class="original-label">📄 说明书原文</span>
+          ${m.original}
+        </div>
+        <div class="teaching">
+          <span class="teaching-label">🧑🏫 教学讲解</span>
+          ${m.teaching}
+        </div>
+      </div>
+    </div>`;
+  });
+  mc.innerHTML = html;
+}
+
+function toggleModule(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.arrow');
+  document.querySelectorAll('#main-content .module-body').forEach(b=>{
+    if(b!==body){b.classList.remove('open');}
+  });
+  document.querySelectorAll('#main-content .arrow').forEach(a=>{
+    if(a!==arrow){a.classList.remove('open');}
+  });
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+function scrollToModule(id) {
+  const el = document.getElementById(id);
+  if(el){ el.scrollIntoView({behavior:'smooth', block:'start'}); el.querySelector('.module-header').click(); }
+}
+
+// Init
+renderSidebar();
+renderContent();
+</script>
+</body>
+</html>
