@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HTML 录屏器 · 标签页捕获版</title>
+<style>
+* { box-sizing: border-box; margin: 0 }
+body { font: 14px/1.5 system-ui, -apple-system, sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh }
+
+.wrap { max-width: 1100px; margin: 0 auto; padding: 20px }
+
+h1 { font-size: 18px; font-weight: 700; margin-bottom: 4px }
+.sub { color: #888; font-size: 12px; margin-bottom: 20px }
+
+/* 预设尺寸区 */
+.presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px }
+.preset { 
+  padding: 8px 14px; border-radius: 8px; border: 1px solid #333; 
+  background: #111; color: #ccc; cursor: pointer; font-size: 12px;
+  transition: all .15s;
+}
+.preset:hover { border-color: #666; color: #fff }
+.preset.active { border-color: #4f8cff; color: #4f8cff; background: #0a1628 }
+
+/* 自定义尺寸 */
+.custom { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap }
+.custom input { width: 80px; padding: 7px 10px; border-radius: 7px; border: 1px solid #333; background: #111; color: #fff; font-size: 13px }
+.custom label { color: #888; font-size: 12px }
+
+/* 按钮 */
+.btns { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap }
+.btn { 
+  padding: 10px 20px; border-radius: 10px; border: 1px solid #333; 
+  background: #111; color: #fff; cursor: pointer; font-size: 13px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 8px; transition: all .15s;
+}
+.btn:hover:not([disabled]) { border-color: #666; background: #1a1a1a }
+.btn[disabled] { opacity: .35; cursor: not-allowed }
+.btn.primary { background: #4f8cff; border-color: #4f8cff; color: #fff }
+.btn.primary:hover:not([disabled]) { background: #3a7ae6 }
+.btn.danger { background: #e74c3c; border-color: #e74c3c }
+.btn.danger:hover:not([disabled]) { background: #c0392b }
+.btn.success { background: #27ae60; border-color: #27ae60 }
+
+/* 预览区 */
+.stage { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px }
+@media (max-width: 760px) { .stage { grid-template-columns: 1fr } }
+.panel { border: 1px solid #222; border-radius: 12px; overflow: hidden; background: #0f0f0f }
+.panel h3 { padding: 10px 14px; font-size: 11px; font-weight: 600; color: #666; border-bottom: 1px solid #222; text-transform: uppercase; letter-spacing: 1px }
+.panel-body { padding: 0; position: relative }
+
+/* iframe 预览 */
+#preview-frame { width: 100%; height: 400px; border: 0; display: block; background: #fff }
+
+/* 录制状态 */
+.rec-indicator { 
+  display: none; align-items: center; gap: 8px; 
+  background: #e74c3c; color: #fff; padding: 6px 14px; 
+  border-radius: 20px; font-size: 12px; font-weight: 700;
+  position: fixed; top: 16px; right: 16px; z-index: 100;
+}
+.rec-indicator.live { display: inline-flex; animation: pulse 2s infinite }
+@keyframes pulse { 50% { opacity: .6 } }
+
+/* 视频输出 */
+#output-video { width: 100%; display: block; background: #000 }
+#dl-wrap { padding: 12px; border-top: 1px solid #222 }
+
+/* 提示 */
+.hint { padding: 12px 14px; border: 1px solid #1a2a1a; border-radius: 10px; background: #0a140a; color: #6a6; font-size: 12px; margin-bottom: 16px; line-height: 1.7 }
+.hint b { color: #8f8 }
+
+/* 全屏预览 */
+#fullscreen-preview { 
+  display: none; position: fixed; inset: 0; z-index: 200; 
+  background: #000; flex-direction: column;
+}
+#fullscreen-preview.active { display: flex }
+#fullscreen-preview iframe { flex: 1; width: 100%; height: 100%; border: 0 }
+#fs-bar { 
+  position: absolute; top: 0; left: 0; right: 0; 
+  padding: 10px 16px; display: flex; justify-content: space-between; align-items: center;
+  background: linear-gradient(to bottom, rgba(0,0,0,.8), transparent); z-index: 10;
+}
+#fs-bar .fs-hint { color: #fff; font-size: 12px; opacity: .8 }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>🎬 HTML 录屏器</h1>
+  <div class="sub">导入 HTML → 全屏预览 → 共享当前标签页 → 录制为 WebM</div>
+
+  <div class="hint">
+    <b>工作原理：</b>导入 HTML 后在全屏模式下预览，点击"开始录制"会请求共享当前标签页。<br>
+    浏览器会将标签页的真实像素编码为视频流，<b>100% 还原</b>（动画/视频/字体/跨域图片全支持）。<br>
+    <b>注意：</b>共享时请选择"<b>当前标签页</b>"，不要选整个屏幕或其他窗口。
+  </div>
+
+  <!-- 预设尺寸 -->
+  <div class="presets" id="presets">
+    <div class="preset active" data-w="1920" data-h="1080">🖥 1080p (1920×1080)</div>
+    <div class="preset" data-w="1280" data-h="720">📺 720p (1280×720)</div>
+    <div class="preset" data-w="3840" data-h="2160">🎯 4K (3840×2160)</div>
+    <div class="preset" data-w="1080" data-h="1920">📱 竖屏9:16 (1080×1920)</div>
+    <div class="preset" data-w="1080" data-h="1080">⬜ 正方形 (1080×1080)</div>
+    <div class="preset" data-w="1920" data-h="10800">🎞 竖屏16:9 (1920×10800)</div>
+    <div class="preset" data-w="750" data-h="1334">📲 iPhone (750×1334)</div>
+  </div>
+
+  <!-- 自定义尺寸 -->
+  <div class="custom">
+    <label>自定义宽 <input id="cw" type="number" placeholder="宽"></label>
+    <label>高 <input id="ch" type="number" placeholder="高"></label>
+    <button class="btn" id="apply-custom">应用</button>
+  </div>
+
+  <!-- 操作按钮 -->
+  <div class="btns">
+    <label class="btn">
+      📂 导入 HTML
+      <input id="file" type="file" accept=".html,.htm,text/html" hidden>
+    </label>
+    <button class="btn primary" id="fullscreen-btn" disabled>🔲 全屏预览</button>
+    <button class="btn success" id="record-btn" disabled>● 开始录制</button>
+    <button class="btn danger" id="stop-btn" disabled>■ 停止</button>
+  </div>
+
+  <!-- 预览 + 输出 -->
+  <div class="stage">
+    <div class="panel">
+      <h3>源页面预览</h3>
+      <div class="panel-body">
+        <iframe id="preview-frame" sandbox="allow-scripts allow-same-origin"></iframe>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>录制输出</h3>
+      <div class="panel-body">
+        <video id="output-video" controls hidden></video>
+        <div id="dl-wrap" hidden>
+          <a id="dl" class="btn success">⬇ 下载 WebM</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 录制指示器 -->
+<div class="rec-indicator" id="rec-indicator">● REC</div>
+
+<!-- 全屏预览层 -->
+<div id="fullscreen-preview">
+  <div id="fs-bar">
+    <span class="fs-hint">全屏预览模式 — 按 Esc 退出</span>
+    <button class="btn" id="exit-fs">✕ 退出全屏</button>
+  </div>
+  <iframe id="fs-frame"></iframe>
+</div>
+
+<script>
+const $ = s => document.querySelector(s)
+
+const fileInput = $('#file')
+const previewFrame = $('#preview-frame')
+const fsFrame = $('#fs-frame')
+const fsPreview = $('#fullscreen-preview')
+const recordBtn = $('#record-btn')
+const stopBtn = $('#stop-btn')
+const fullscreenBtn = $('#fullscreen-btn')
+const recIndicator = $('#rec-indicator')
+const outputVideo = $('#output-video')
+const dl = $('#dl')
+const dlWrap = $('#dl-wrap')
+
+let currentHtml = ''
+let mediaRecorder = null
+let chunks = []
+let lastBlobUrl = null
+
+// ============ 预设尺寸 ============
+$('#presets').addEventListener('click', e => {
+  const el = e.target.closest('.preset')
+  if (!el) return
+  document.querySelectorAll('.preset').forEach(p => p.classList.remove('active'))
+  el.classList.add('active')
+  $('#cw').value = el.dataset.w
+  $('#ch').value = el.dataset.h
+})
+
+$('#apply-custom').addEventListener('click', () => {
+  const w = $('#cw').value, h = $('#ch').value
+  if (w && h) {
+    document.querySelectorAll('.preset').forEach(p => p.classList.remove('active'))
+  }
+})
+
+// ============ 导入 HTML ============
+fileInput.addEventListener('change', async e => {
+  const f = e.target.files[0]
+  if (!f) return
+  currentHtml = await f.text()
+  
+  // 预览
+  previewFrame.srcdoc = currentHtml
+  fsFrame.srcdoc = currentHtml
+  
+  fullscreenBtn.disabled = false
+  recordBtn.disabled = false
+  showToast('已导入：' + f.name)
+})
+
+// ============ 全屏预览 ============
+fullscreenBtn.addEventListener('click', () => {
+  const w = $('#cw').value || 1920
+  const h = $('#ch').value || 1080
+  
+  // 设置 iframe 尺寸
+  fsFrame.style.width = w + 'px'
+  fsFrame.style.height = h + 'px'
+  fsFrame.style.margin = '0 auto'
+  fsFrame.style.display = 'block'
+  
+  fsPreview.classList.add('active')
+})
+
+$('#exit-fs').addEventListener('click', () => {
+  fsPreview.classList.remove('active')
+})
+
+// Esc 退出全屏
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') fsPreview.classList.remove('active')
+})
+
+// ============ 录制 ============
+recordBtn.addEventListener('click', async () => {
+  try {
+    // 请求共享当前标签页
+    const stream = await navigator.mediaDevices.getDisplayMedia({
+      video: {
+        width: { ideal: parseInt($('#cw').value) || 1920 },
+        height: { ideal: parseInt($('#ch').value) || 1080 },
+        frameRate: { ideal: 30, max: 60 }
+      },
+      audio: false
+    })
+
+    // 用户停止共享时也自动停止录制
+    stream.getVideoTracks()[0].addEventListener('ended', () => {
+      if (mediaRecorder && mediaRecorder.state === 'recording') stopRecording()
+    })
+
+    chunks = []
+    const mime = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm']
+      .find(t => MediaRecorder.isTypeSupported(t)) || 'video/webm'
+
+    mediaRecorder = new MediaRecorder(stream, { 
+      mimeType: mime, 
+      videoBitsPerSecond: 8_000_000 
+    })
+    
+    mediaRecorder.ondataavailable = e => { if (e.data.size) chunks.push(e.data) }
+    mediaRecorder.onstop = () => {
+      stream.getTracks().forEach(t => t.stop())
+      const blob = new Blob(chunks, { type: 'video/webm' })
+      if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl)
+      lastBlobUrl = URL.createObjectURL(blob)
+      outputVideo.src = lastBlobUrl
+      outputVideo.hidden = false
+      dlWrap.hidden = false
+      dl.href = lastBlobUrl
+      dl.download = `record-${Date.now()}.webm`
+      
+      recIndicator.classList.remove('live')
+      recordBtn.disabled = false
+      stopBtn.disabled = true
+      showToast('✅ 录制完成')
+    }
+
+    mediaRecorder.start(500)
+    recIndicator.classList.add('live')
+    recordBtn.disabled = true
+    stopBtn.disabled = false
+    showToast('🔴 录制中… 请在弹窗中选择"当前标签页"')
+
+  } catch (err) {
+    showToast('❌ 录制失败：' + err.message)
+    console.error(err)
+  }
+})
+
+stopBtn.addEventListener('click', () => {
+  stopRecording()
+})
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop()
+  }
+}
+
+// ============ Toast ============
+function showToast(msg) {
+  let t = $('#toast')
+  if (!t) {
+    t = document.createElement('div')
+    t.id = 'toast'
+    t.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:999'
+    document.body.appendChild(t)
+  }
+  t.textContent = msg
+  t.style.opacity = '1'
+  clearTimeout(showToast._t)
+  showToast._t = setTimeout(() => t.style.opacity = '0', 2500)
+}
+</script>
+</body>
+</html>
